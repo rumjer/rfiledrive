@@ -1,7 +1,7 @@
 # fileserver
 
-fileserver is a simple browser-basesd file manager, written in c++, great for remote access file management. useful for home-servers.
-users browse files, preview images and videos (has .heic preview support), create folders/direcotries, upload/download files, delete files, etc (more below)
+fileserver is a simple browser-based file manager, written in c++, great for remote access file management. useful for home-servers.
+users browse files, preview images and videos (has .heic preview support), create folders/directories, upload/download files, delete files, etc (more below)
 
 it allows you to:
 
