@@ -1,6 +1,10 @@
 # fileserver
 
-cpp project that allows you to:
+fileserver is a simple browser-basesd file manager, written in c++, great for remote access file management. useful for home-servers.
+users browse files, preview images and videos (has .heic preview support), create folders/direcotries, upload/download files, delete files, etc (more below)
+
+it allows you to:
+
 - create folders
 - upload files
 - download files
