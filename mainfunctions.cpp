@@ -89,6 +89,21 @@ fs::path safePath(const std::string &name) {
   return requested;
 }
 
+// checks the path inside an uploaded folder
+bool validRelPath(const std::string &rel) {
+  if (rel.empty() || rel.size() > 4096)
+    return false;
+  if (rel.find('\0') != std::string::npos)
+    return false;
+  fs::path p(rel);
+  if (p.is_absolute() || !p.has_filename())
+    return false;
+  for (const auto &part : p)
+    if (part == ".." || part == ".")
+      return false;
+  return true;
+}
+
 // v1.3 start
 
 // this is for new names to not have a path component fuck everything up
@@ -208,6 +223,11 @@ bool deleteFile(const fs::path &path)
 // upload files
 
 bool uploadFile(const fs::path &filePath, const std::string &content) {
+  std::error_code ec;
+  fs::create_directories(filePath.parent_path(), ec);
+  if (ec)
+    return false;
+
   std::ofstream out(filePath, std::ios::binary);
   if (!out)
     return false;

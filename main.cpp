@@ -104,10 +104,20 @@ int main() {
         }
 
         const auto &file = req.form.get_file("file");
-        std::string filename = fs::path(file.filename).filename().string();
         std::string destDir = req.get_param_value("path");
 
-        fs::path filePath = safePath((fs::path(destDir) / filename).string());
+        // folder uploads send the path inside the folder; normal uploads send
+        // nothing, so fall back to just the file name like before
+        std::string rel = req.get_param_value("rel");
+        if (rel.empty())
+        rel = fs::path(file.filename).filename().string();
+        if (!validRelPath(rel)) {
+        res.status = 400;
+        res.set_content("invalid file path", "text/plain");
+        return;
+        }
+
+        fs::path filePath = safePath((fs::path(destDir) / rel).string());
         if (filePath.empty()) {
           res.status = 403;
           res.set_content("invalid path", "text/plain");

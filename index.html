@@ -97,10 +97,12 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
     <div class="tools">
       <button id="mk">New folder</button>
       <button id="up" class="primary">Upload</button>
+      <button id="updir">Upload folder</button>
       <button id="tr" hidden>Trash</button>
       <button id="back" hidden>Back to files</button>
       <button id="empty" class="danger" hidden>Empty trash</button>
       <input id="pick" type="file" multiple hidden>
+      <input id="pickdir" type="file" webkitdirectory multiple hidden>
     </div>
   </header>
   <p id="note" class="note" hidden>Deleted items stay here for 48 hours, then they are removed for good.</p>
@@ -342,10 +344,10 @@ async function del(name, p, isDir) {
 
 let busy = false;
 
-function sendFile(f, dir, onProg) {
+function sendFile(f, rel, dir, onProg) {
   return new Promise((ok, fail) => {
     const x = new XMLHttpRequest();
-    x.open('POST', '/api/upload?path=' + enc(dir));
+    x.open('POST', '/api/upload?path=' + enc(dir) + '&rel=' + enc(rel));
     x.upload.onprogress = e => { if (e.lengthComputable) onProg(e.loaded); };
     x.onload = () => x.status < 300 ? ok() : fail();
     x.onerror = x.onabort = () => fail();
@@ -354,13 +356,15 @@ function sendFile(f, dir, onProg) {
   });
 }
 
-async function upload(files) {
+const fromFiles = files => files.map(f => ({ f, rel: f.webkitRelativePath || f.name }));
+
+async function upload(items) {
   if (inTrash) return;
   if (busy) { say('Wait for the current upload to finish.', 1); return; }
   busy = true;
 
   const dir = path;
-  const jobs = files.map(f => ({ f, size: f.size || 1, sent: 0, done: false }));
+  const jobs = items.map(({ f, rel }) => ({ f, rel, size: f.size || 1, sent: 0, done: false }));
   const total = jobs.reduce((s, j) => s + j.size, 0);
   let next = 0, failed = 0;
 
@@ -391,7 +395,7 @@ async function upload(files) {
   const worker = async () => {
     while (next < jobs.length) {
       const j = jobs[next++];
-      try { await sendFile(j.f, dir, n => { j.sent = Math.min(n, j.size); draw(); }); }
+      try { await sendFile(j.f, j.rel, dir, n => { j.sent = Math.min(n, j.size); draw(); }); }
       catch { failed++; }
       j.sent = j.size; j.done = true;
       draw();
@@ -408,7 +412,9 @@ async function upload(files) {
 }
 
 $('#up').onclick = () => $('#pick').click();
-$('#pick').onchange = e => { const f = [...e.target.files]; e.target.value = ''; if (f.length) upload(f); };
+$('#pick').onchange = e => { const f = [...e.target.files]; e.target.value = ''; if (f.length) upload(fromFiles(f)); };
+$('#updir').onclick = () => $('#pickdir').click();
+$('#pickdir').onchange = e => { const f = [...e.target.files]; e.target.value = ''; if (f.length) upload(fromFiles(f)); };
 $('#mk').onclick = async () => {
   const n = (prompt('Folder name') || '').trim();
   if (!n) return;
@@ -424,7 +430,32 @@ $('#pvclose').onclick = () => $('#pv').close();
 $('#pv').addEventListener('close', () => $('#pvbody').textContent = '');
 $('#pv').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 addEventListener('dragover', e => e.preventDefault());
-addEventListener('drop', e => { e.preventDefault(); if (e.dataTransfer.files.length) upload([...e.dataTransfer.files]); });
+
+// dropped folders: walk them to collect every file with its relative path
+const readAll = r => new Promise((ok, fail) => {
+  const out = [];
+  const go = () => r.readEntries(b => b.length ? (out.push(...b), go()) : ok(out), fail);
+  go();
+});
+async function walk(entry, prefix, out) {
+  if (entry.isFile) {
+    const f = await new Promise((ok, fail) => entry.file(ok, fail));
+    out.push({ f, rel: prefix + entry.name });
+  } else if (entry.isDirectory) {
+    for (const e of await readAll(entry.createReader())) await walk(e, prefix + entry.name + '/', out);
+  }
+}
+addEventListener('drop', async e => {
+  e.preventDefault();
+  // webkitGetAsEntry must be called right away, before any await
+  const entries = [...e.dataTransfer.items].filter(i => i.kind === 'file')
+    .map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+  if (!entries.length) { if (e.dataTransfer.files.length) upload(fromFiles([...e.dataTransfer.files])); return; }
+  const out = [];
+  try { for (const en of entries) await walk(en, '', out); }
+  catch { say('Could not read the dropped folder.', 1); return; }
+  if (out.length) upload(out); else say('Nothing to upload (empty folder?).', 1);
+});
 addEventListener('hashchange', route);
 
 // The Trash button only appears once the backend answers /api/trash/list.

@@ -37,6 +37,7 @@ bool purgeFromTrash(const std::string &id);
 bool emptyTrash();
 void purgeExpired();
 json storageInfo();
+bool validRelPath(const std::string &rel);
 
 // v1.3
 
