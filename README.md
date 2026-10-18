@@ -1,6 +1,6 @@
 <img width="1716" height="890" alt="example" src="https://github.com/user-attachments/assets/517ee753-b833-4ccd-9a34-fc746f46612e" />
 
-# fileserver
+# rFiledrive
 
 a simple browser-based file manager written in c++, made for remote access to the files on a home server
 open it in your browser, then browse, upload, download, rename, move and delete files and folders, like a self hosted google drive
@@ -46,20 +46,19 @@ you need a c++17 compiler, `make`, `pkg-config` and the libheif dev files (used 
 ```bash
 # example for apt and apk (since they are mostly used for servers)
 
-doas apt install libheif-examples libheif1
-doas apk add libheif-dev
-
+sudo apt install build-essential pkg-config libheif-dev
+doas apk add build-base pkgconf libheif-dev
 ```
 
 ### 2. download and build
 
 ```bash
-git clone https://github.com/rumjerr/fileserver.git
-cd fileserver
+git clone https://github.com/rumjer/rfiledrive.git
+cd rfiledrive
 make
 ```
 
-(this creates the `fileserver` program in the same folder)
+(this creates the `rfiledrive` program in the same folder)
 
 ### 3. set up the folders
 
@@ -74,7 +73,7 @@ cp index.html www/
 ### 4. start it
 
 ```bash
-FILES_ROOT=$HOME/files FILES_HOST=127.0.0.1 ./fileserver
+FILES_ROOT=$HOME/files FILES_HOST=127.0.0.1 ./rfiledrive
 ```
 
 now open http://localhost:8080 in your browser.
@@ -94,22 +93,22 @@ everything is configured with environment variables:
 
 ### run it as a sysd service (optional)
 
-on a server you can start it automatically with systemd. save this as `/etc/systemd/system/fileserver.service` and change the user and paths to match yours
+on a server you can start it automatically with systemd. save this as `/etc/systemd/system/rfiledrive.service` and change the user and paths to match yours
 
 (this is what i use on my debian server)
 
 ```ini
 [Unit]
-Description=File server
+Description=rFiledrive File Server
 After=network-online.target
 
 [Service]
 User=youruser
-WorkingDirectory=/home/youruser/fileserver
+WorkingDirectory=/home/youruser/rfiledrive
 Environment=FILES_ROOT=/srv/files
-Environment=FILES_WWW=/home/youruser/fileserver/www
+Environment=FILES_WWW=/home/youruser/rfiledrive/www
 Environment=FILES_HOST=127.0.0.1
-ExecStart=/home/youruser/fileserver/fileserver
+ExecStart=/home/youruser/rfiledrive/rfiledrive
 Restart=always
 RestartSec=5
 
@@ -121,7 +120,7 @@ then reload
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable --now fileserver
+sudo systemctl enable --now rfiledrive
 ```
 
 ## security notice for your files

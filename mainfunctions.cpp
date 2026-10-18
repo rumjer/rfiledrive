@@ -544,12 +544,12 @@ void purgeExpired() {
 
 // storage info is vibecoded aswell
 
-// fileserver v1.2 addition
+// v1.2 addition
 
 // -- STORAGE INFO --
 // returns disk usage stats: total/used/free from statvfs,
 // top-level folder sizes, subfolder breakdown for the biggest ones,
-// and the largest individual files across the whole tree.
+// and the largest individual files across the whole tree
 
 static uintmax_t dirSize(const fs::path &dir) {
   uintmax_t total = 0;

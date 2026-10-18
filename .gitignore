@@ -1,4 +1,5 @@
 # compiled binaries & objects
+rfiledrive
 fileserver
 server
 *.o
@@ -7,3 +8,4 @@ server
 # editor files
 .vscode/
 *.swp
+
