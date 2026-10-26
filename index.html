@@ -89,6 +89,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 #mvgo:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:560px){.row{flex-wrap:wrap}.acts{width:100%;justify-content:flex-end}}
 </style>
+<link rel="stylesheet" href="liveedit.css">
 </head>
 <body>
 <main>
@@ -140,6 +141,8 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
   <div class="stobody" id="stobody"></div>
 </dialog>
 
+<script src="liveedit.js"></script>
+<script src="hardcodedcode.js" onerror="this.remove()"></script>
 <script>
 const $ = s => document.querySelector(s), enc = encodeURIComponent;
 const join = (a, b) => a ? a + '/' + b : b;
@@ -202,7 +205,7 @@ async function load() {
     const ic = el('span', it.isDirectory ? 'ic dir' : 'ic', it.isDirectory ? '' : ext(it.name).slice(0, 4));
     const nm = el('span', '', it.name), ac = el('span', 'acts');
     b.append(ic, nm);
-    b.onclick = () => it.isDirectory ? (location.hash = enc(p)) : kind(it.name) ? preview(it.name, p) : save(it.name, p);
+    b.onclick = () => it.isDirectory ? (location.hash = enc(p)) : window.liveEdit && liveEdit.canOpen(it.name) ? liveEdit.open(it.name, p) : kind(it.name) ? preview(it.name, p) : save(it.name, p);
     if (!it.isDirectory) {
       const d = el('a', 'btn', 'Download'); d.href = url(p); d.download = it.name;
       ac.append(d);

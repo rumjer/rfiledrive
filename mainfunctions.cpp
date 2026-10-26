@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+#include "liveedit.h"      // v2.0: safe saving
 #include "mainfunctions.h" // <-------
 
 #include <fstream>
@@ -38,6 +39,9 @@ std::vector<FileEntry> listDir(const fs::path &dir) {
   for (const auto &entry : fs::directory_iterator(dir)) {
     FileEntry fe;
     fe.name = entry.path().filename().string();
+    // v2.0: temp files from a save in progress shouldnt show up
+    if (fe.name.rfind(TEMP_PREFIX, 0) == 0)
+      continue;
     fe.isDirectory = entry.is_directory();
     results.push_back(fe);
   }
@@ -228,12 +232,10 @@ bool uploadFile(const fs::path &filePath, const std::string &content) {
   if (ec)
     return false;
 
-  std::ofstream out(filePath, std::ios::binary);
-  if (!out)
-    return false;
-
-  out << content;
-  return true;
+  // v2.0: if the file already exists the old version is kept, and the new
+  // content is written to a temp file and renamed (never half written)
+  return saveFileSafely(filePath, content, "upload-overwrite", "", false) ==
+         SaveResult::Ok;
 }
 
 // download files
@@ -283,6 +285,36 @@ std::string getMimeType(const fs::path &filePath) {
     return "application/pdf";
   if (ext == ".txt")
     return "text/plain";
+
+  // v2.0: office, data and access files
+  if (ext == ".csv")
+    return "text/csv";
+  if (ext == ".tsv")
+    return "text/tab-separated-values";
+  if (ext == ".xls")
+    return "application/vnd.ms-excel";
+  if (ext == ".xlsx")
+    return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+  if (ext == ".doc")
+    return "application/msword";
+  if (ext == ".docx")
+    return "application/"
+           "vnd.openxmlformats-officedocument.wordprocessingml.document";
+  if (ext == ".ppt")
+    return "application/vnd.ms-powerpoint";
+  if (ext == ".pptx")
+    return "application/"
+           "vnd.openxmlformats-officedocument.presentationml.presentation";
+  if (ext == ".odt")
+    return "application/vnd.oasis.opendocument.text";
+  if (ext == ".ods")
+    return "application/vnd.oasis.opendocument.spreadsheet";
+  if (ext == ".odp")
+    return "application/vnd.oasis.opendocument.presentation";
+  if (ext == ".rtf")
+    return "application/rtf";
+  if (ext == ".mdb" || ext == ".accdb")
+    return "application/msaccess";
   return "application/octet-stream";
 }
 
@@ -756,9 +788,7 @@ bool heicToJpeg(const fs::path &path, int maxSide, std::string &outJpeg) {
   return ok != 0 && !outJpeg.empty();
 }
 
-
 // ----------------------------------------------------------------------------------
-
 
 // this is commented out just like changeDir, just for me, ignore
 
@@ -862,7 +892,7 @@ name; uploadFile(outPath, content); std::cout << "wrote copy to: " << outPath <<
             if (deleteFile(target))
                 std::cout << "deleted: " << target << "\n";
             else
-                std::cout << "failed to delete (doesn't exist?): " << target <<
+                std::cout << "failed to delete (doesnt exist?): " << target <<
 "\n";
         }
 

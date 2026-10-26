@@ -4,8 +4,17 @@ fileserver
 server
 *.o
 *.d
+tests/unit_liveedit
 
 # editor files
 .vscode/
 *.swp
 
+.aider*
+
+# hardcoded / dad-specific files (kept local, never pushed to github)
+hardcodedcode*
+tools/migrate_accdb_to_sqlite.py
+*.sqlite
+*.db
+*.accdb

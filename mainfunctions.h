@@ -1,18 +1,17 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <filesystem>
-#include <sys/statvfs.h>
 #include "json.hpp"
+#include <filesystem>
+#include <string>
+#include <sys/statvfs.h>
+#include <vector>
 
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-struct FileEntry
-{
-    std::string name;
-    bool isDirectory;
+struct FileEntry {
+  std::string name;
+  bool isDirectory;
 };
 
 std::vector<FileEntry> listDir(const fs::path &dir);
@@ -20,7 +19,8 @@ json toJson(const std::vector<FileEntry> &entries);
 fs::path safePath(const std::string &name);
 bool createDir(const fs::path &dir);
 
-// these two were commented out since they arent needed in mainfunctions.cpp but if needed (for troubleshooting/reference,etc) they will be uncommented
+// these two were commented out since they arent needed in mainfunctions.cpp but
+// if needed (for troubleshooting/reference,etc) they will be uncommented
 
 // bool changeDir(fs::path &currentDir, const std::string &folderName);
 // bool deleteFile(const fs::path &path);

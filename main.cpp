@@ -1,5 +1,11 @@
 #include "httplib.h"
+#include "liveedit.h"
 #include "mainfunctions.h"
+#include "sqlite_db.h"
+
+#ifdef HAS_HARDCODEDCODE
+#include "hardcodedcode.h"
+#endif
 
 #include <algorithm>
 #include <cstdlib>
@@ -38,6 +44,10 @@ static void sendResult(httplib::Response &res, OpResult r, const char *okMsg) {
 
 int main() {
   httplib::Server svr;
+
+  // httplib only accepts 100mb bodies by default, which is too small for
+  // big uploads and for saving office files from the editor (v2.0)
+  svr.set_payload_max_length(MAX_PAYLOAD_BYTES);
 
   // GET /api/list
   // lists the contents of the directory given by the "path" query param
@@ -95,42 +105,42 @@ int main() {
   // accepts a multipart file upload under the file field and writes it into
   // the subfolder given by the "path" query param (relative to the base
   // directory)
-  svr.Post(
-      "/api/upload", [](const httplib::Request &req, httplib::Response &res) {
-        if (!req.form.has_file("file")) {
-          res.status = 400;
-          res.set_content("no file provided", "text/plain");
-          return;
-        }
+  svr.Post("/api/upload",
+           [](const httplib::Request &req, httplib::Response &res) {
+             if (!req.form.has_file("file")) {
+               res.status = 400;
+               res.set_content("no file provided", "text/plain");
+               return;
+             }
 
-        const auto &file = req.form.get_file("file");
-        std::string destDir = req.get_param_value("path");
+             const auto &file = req.form.get_file("file");
+             std::string destDir = req.get_param_value("path");
 
-        // folder uploads send the path inside the folder; normal uploads send
-        // nothing, so fall back to just the file name like before
-        std::string rel = req.get_param_value("rel");
-        if (rel.empty())
-        rel = fs::path(file.filename).filename().string();
-        if (!validRelPath(rel)) {
-        res.status = 400;
-        res.set_content("invalid file path", "text/plain");
-        return;
-        }
+             // folder uploads send the path inside the folder; normal uploads
+             // send nothing, so fall back to just the file name like before
+             std::string rel = req.get_param_value("rel");
+             if (rel.empty())
+               rel = fs::path(file.filename).filename().string();
+             if (!validRelPath(rel)) {
+               res.status = 400;
+               res.set_content("invalid file path", "text/plain");
+               return;
+             }
 
-        fs::path filePath = safePath((fs::path(destDir) / rel).string());
-        if (filePath.empty()) {
-          res.status = 403;
-          res.set_content("invalid path", "text/plain");
-          return;
-        }
+             fs::path filePath = safePath((fs::path(destDir) / rel).string());
+             if (filePath.empty()) {
+               res.status = 403;
+               res.set_content("invalid path", "text/plain");
+               return;
+             }
 
-        if (uploadFile(filePath, file.content))
-          res.set_content("uploaded", "text/plain");
-        else {
-          res.status = 500;
-          res.set_content("failed to write", "text/plain");
-        }
-      });
+             if (uploadFile(filePath, file.content))
+               res.set_content("uploaded", "text/plain");
+             else {
+               res.status = 500;
+               res.set_content("failed to write", "text/plain");
+             }
+           });
 
   // DELETE /api/delete
   // moves a file or directory (name query param) to the trash
@@ -216,7 +226,7 @@ int main() {
         size = std::clamp(size, 64, 4096);
 
         // decoding is slow, so let the browser reuse a conversion if the file
-        // didn't change
+        // didnt change
         std::string etag =
             "\"" + std::to_string(fs::file_size(filePath, ec)) + "-" +
             std::to_string(
@@ -283,10 +293,23 @@ int main() {
     res.set_content(storageInfo().dump(), "application/json");
   });
 
+  // v2.0: /api/fileinfo, /api/save and /api/versions (see liveedit.cpp)
+  registerLiveEditRoutes(svr);
+
+  // v2.0: /api/db/schema, /api/db/generic/rows, /api/db/generic/save
+  registerDbRoutes(svr);
+
+#ifdef HAS_HARDCODEDCODE
+  registerHardcodedRoutes(svr);
+#endif
+
   // background cleaner: every 10 minutes remove trash older than 48h
+  // (and old file versions, see liveedit.h for the rules)
   std::thread([] {
+    cleanStaleTempFiles(); // leftovers from a crash, checked once at startup
     while (true) {
       purgeExpired();
+      purgeOldVersions();
       std::this_thread::sleep_for(std::chrono::minutes(10));
     }
   }).detach();
