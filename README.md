@@ -17,7 +17,7 @@ i made it as a learning project to try out a new library ([cpp-httplib](https://
 - preview images, videos, pdf, xls, xlsx, txt, csv, sqlite and others in the browser
 - edit live from the browser files which are on the hosted machine (csv, txt, sqlite cells)
 - history, previous file recovery: past versions of edited files are saved and restorable by a single click
-- atomic saving & conflict protection: saved edits write to a temp file first so nothing gets corrupted, and warns you if the file changed on the server meanwhile
+- temp saving and conflict protection: saved edits write to a temp file first so nothing gets corrupted, and warns you if the file changed on the server meanwhile
 - trash: deleted items are kept for 48 hours, can be restored, and are then removed automatically
 - storage details: free space and the biggest folders
 - paths are checked so nothing outside the files folder can be reached (`safePath`)
