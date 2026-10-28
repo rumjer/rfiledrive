@@ -146,7 +146,7 @@ bool atomicReplaceFile(const fs::path &target, const fs::path &readyTemp,
       fs::permissions(readyTemp, st.permissions(), ec);
   }
 
-  // rename is atomic: readers see the old file or the new one, never half
+  // rename is atomic, readers see the old file or the new one, never half
   if (::rename(readyTemp.c_str(), target.c_str()) != 0)
     return false;
 
@@ -381,6 +381,7 @@ void purgeOldVersions(int keepNewest, long long maxAgeSeconds) {
 
   // remove folders that are empty now (longest paths first = children before
   // their parents, so a parent only disappears after all children are gone)
+  // basicaly recursive deletion or something
   std::sort(dirs.begin(), dirs.end(), [](const auto &a, const auto &b) {
     return a.string().size() > b.string().size();
   });
@@ -670,7 +671,7 @@ void registerLiveEditRoutes(httplib::Server &svr) {
           });
 
   // POST /api/versions/restore?name=<file>&id=<version id>[&expected=<token>]
-  // puts an old version back. the current file is kept as a version first,
+  // puts a old version back. the current file is kept as a version first,
   // so a restore can be undone too
   svr.Post("/api/versions/restore",
            [](const httplib::Request &req, httplib::Response &res) {
@@ -689,4 +690,77 @@ void registerLiveEditRoutes(httplib::Server &svr) {
                                       req.get_param_value("expected")),
                        p);
            });
+
+  // loads of vibecoded stuff below
+
+  svr.Get(
+      "/api/convert", [](const httplib::Request &req, httplib::Response &res) {
+        fs::path p = safePath(req.get_param_value("name"));
+        std::error_code ec;
+        if (p.empty() || !fs::is_regular_file(p, ec)) {
+          sendText(res, 404, "not found");
+          return;
+        }
+
+        std::string ext = p.extension().string();
+        for (char &c : ext)
+          c = std::tolower((unsigned char)c);
+        if (ext != ".doc") {
+          sendText(res, 415, "conversion only supports .doc");
+          return;
+        }
+
+        // use a unique temp directory per request so concurrent conversions
+        // cannot clobber each other's output files.
+        char tmpl[] = "/tmp/rfd-conv-XXXXXX";
+        char *tmpDir = mkdtemp(tmpl);
+        if (!tmpDir) {
+          sendText(res, 500, "could not create temp directory for conversion");
+          return;
+        }
+
+        // escape the path for the shell command.
+        // safePath() already guarantees the path is inside FILES_ROOT and
+        // contains no special characters that would allow shell injection,
+        // but we wrap it in single-quotes anyway as an extra layer.
+        auto shellQuote = [](const std::string &s) {
+          std::string out = "'";
+          for (char c : s) {
+            if (c == '\'')
+              out += "'\\''"; // end quote, escaped quote, re-open quote
+            else
+              out += c;
+          }
+          out += "'";
+          return out;
+        };
+
+        std::string cmd = "libreoffice --headless --convert-to html --outdir " +
+                          std::string(tmpDir) + " " + shellQuote(p.string()) +
+                          " >/dev/null 2>&1";
+        int rc = ::system(cmd.c_str());
+
+        fs::path outFile = fs::path(tmpDir) / (p.stem().string() + ".html");
+
+        std::string html;
+        bool ok = (rc == 0) && fs::is_regular_file(outFile, ec);
+        if (ok) {
+          std::ifstream f(outFile, std::ios::binary);
+          html.assign(std::istreambuf_iterator<char>(f),
+                      std::istreambuf_iterator<char>());
+          ok = !html.empty();
+        }
+
+        // clean up + on failure
+        fs::remove_all(fs::path(tmpDir), ec);
+
+        if (!ok) {
+          sendText(res, 500,
+                   "conversion failed — is LibreOffice installed? "
+                   "(apt install libreoffice-writer-nogui)");
+          return;
+        }
+
+        res.set_content(html, "text/html; charset=utf-8");
+      });
 }

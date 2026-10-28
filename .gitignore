@@ -1,4 +1,3 @@
-# compiled binaries & objects
 rfiledrive
 fileserver
 server
@@ -6,15 +5,17 @@ server
 *.d
 tests/unit_liveedit
 
-# editor files
 .vscode/
 *.swp
 
 .aider*
 
-# hardcoded / dad-specific files (kept local, never pushed to github)
 hardcodedcode*
 tools/migrate_accdb_to_sqlite.py
 *.sqlite
 *.db
 *.accdb
+
+# local backups
+.backup_option_b_baseline/
+*.tmp

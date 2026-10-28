@@ -16,8 +16,10 @@
 
 #include <algorithm>
 #include <cstring>
+#include <functional> // std::hash
 #include <libheif/heif.h>
 #include <memory>
+#include <sstream> // std::ostringstream (v2.1 thumbnail cache)
 
 // --
 
@@ -286,7 +288,7 @@ std::string getMimeType(const fs::path &filePath) {
   if (ext == ".txt")
     return "text/plain";
 
-  // v2.0: office, data and access files
+  // v2.0 office, data and access files
   if (ext == ".csv")
     return "text/csv";
   if (ext == ".tsv")
@@ -786,6 +788,66 @@ bool heicToJpeg(const fs::path &path, int maxSide, std::string &outJpeg) {
       &outJpeg, w, h, 3, rgb.data(), 85);
 
   return ok != 0 && !outJpeg.empty();
+}
+
+// v2.1!!!!!!!!!!!!!!!!! disk cached heic thumbnail
+// ------------------------------------------------
+//
+// cache lives in /tmp/rfd-thumbnails/ and survives across requests but not
+// across reboots (fine, thumbnails regenerate on demand)
+// the cache key is a hex hash of (absolute path + file size + mtime + maxSide)
+// so stale entries are never served after a file is replaced or edited
+
+static fs::path thumbCacheDir() {
+  return fs::temp_directory_path() / "rfd-thumbnails";
+}
+
+static std::string thumbCacheFilename(const fs::path &p, int maxSide) {
+  std::error_code ec;
+  auto sz = static_cast<long long>(fs::file_size(p, ec));
+  auto mt = fs::last_write_time(p, ec).time_since_epoch().count();
+
+  std::string key = p.string() + "|" + std::to_string(sz) + "|" +
+                    std::to_string(mt) + "|" + std::to_string(maxSide);
+
+  std::size_t h = std::hash<std::string>{}(key);
+  std::ostringstream ss;
+  ss << std::hex << h;
+  return ss.str() + ".jpg";
+}
+
+bool heicToJpegCached(const fs::path &path, int maxSide, std::string &outJpeg) {
+  std::error_code ec;
+
+  fs::path cacheDir = thumbCacheDir();
+  fs::create_directories(cacheDir, ec); // best-effort; fail silently
+
+  fs::path cached = cacheDir / thumbCacheFilename(path, maxSide);
+
+  // serve from cache if it exists and is non-empty
+  if (fs::is_regular_file(cached, ec)) {
+    std::ifstream f(cached, std::ios::binary);
+    if (f) {
+      outJpeg.assign(std::istreambuf_iterator<char>(f),
+                     std::istreambuf_iterator<char>());
+      if (!outJpeg.empty())
+        return true;
+    }
+  }
+
+  // cache miss — decode the real image
+  if (!heicToJpeg(path, maxSide, outJpeg))
+    return false;
+
+  // write to cache (errors are non-fatal — worst case we decode again next
+  // time)
+  {
+    std::ofstream f(cached, std::ios::binary);
+    if (f)
+      f.write(outJpeg.data(), static_cast<std::streamsize>(outJpeg.size()));
+  }
+
+  return true;
 }
 
 // ----------------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 CXX = g++
-CUSTOM_SRC   = $(wildcard hardcodedcode.cpp)
-CUSTOM_OBJ   = $(CUSTOM_SRC:.cpp=.o)
+CUSTOM_SRC = $(wildcard hardcodedcode.cpp)
+CUSTOM_OBJ = $(CUSTOM_SRC:.cpp=.o)
 CUSTOM_FLAGS = $(if $(CUSTOM_SRC),-DHAS_HARDCODEDCODE,)
 
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -MMD -MP $(CUSTOM_FLAGS) $(shell pkg-config --cflags libheif)
-LDFLAGS = -lpthread -lsqlite3 $(shell pkg-config --libs libheif)
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -MMD -MP $(CUSTOM_FLAGS) -DCPPHTTPLIB_ZLIB_SUPPORT $(shell pkg-config --cflags libheif)
+LDFLAGS = -lpthread -lsqlite3 -lz $(shell pkg-config --libs libheif)
 
 all: rfiledrive
 

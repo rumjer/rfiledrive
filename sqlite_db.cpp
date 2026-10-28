@@ -9,15 +9,10 @@
 #include <string>
 #include <vector>
 
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Generic SQLite viewer
-// Opens any .sqlite / .db file in the drive. The file path is validated
-// through safePath() so path-traversal is impossible.
-// ─────────────────────────────────────────────────────────────────────────────
+// generic sqlite viewer (vibecoded)
 
 // GET /api/db/schema?name=<relpath>
-// Returns { tables: [ { name, columns: [ { name, type } ] } ] }
+// returns { tables: [ { name, columns: [ { name, type } ] } ] }
 static void handleGenericSchema(const httplib::Request &req,
                                 httplib::Response &res) {
   fs::path p = safePath(req.get_param_value("name"));

@@ -1,7 +1,4 @@
-/* liveedit.css (v2.0.0, phase 1.6): the editor window.
-   uses the color variables from index.html (--bg, --card, --ink ...), the
-   fallbacks are only there so this file also works on its own.
-   the window fills the whole screen so it works on a phone */
+/* this is fully vibecoded */
 
 #ledlg {
   width: 100vw;
@@ -13,15 +10,15 @@
   padding: 0;
   border: 0;
   border-radius: 0;
-  background: var(--bg, #131416);
-  color: var(--ink, #e8e9ec);
+  background: var(--bg, #ffffff);
+  color: var(--ink, #222a31);
 }
 #ledlg[open] {
   display: flex;
   flex-direction: column;
 }
 #ledlg::backdrop {
-  background: #000;
+  background: rgba(30, 40, 50, 0.45);
 }
 
 /* tap targets of at least 44px, nothing that only works with a mouse */
@@ -45,13 +42,13 @@
 }
 .le-head {
   padding-top: calc(10px + env(safe-area-inset-top, 0px));
-  border-bottom: 1px solid var(--line, #2c2e34);
+  border-bottom: 1px solid var(--line, #dfe3e8);
 }
 .le-foot {
   justify-content: flex-end;
   flex-wrap: wrap;
   padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid var(--line, #2c2e34);
+  border-top: 1px solid var(--line, #dfe3e8);
 }
 .le-title {
   flex: 1;
@@ -71,8 +68,8 @@
 .le-banner {
   flex: none;
   padding: 10px 14px;
-  background: var(--tab, #c9a04a);
-  color: #1a1405;
+  background: var(--tab, #e0b24a);
+  color: #ffffff;
   font-size: 0.9rem;
 }
 
@@ -89,7 +86,7 @@
   overflow: auto;
 }
 .le-hist {
-  background: var(--bg, #131416);
+  background: var(--bg, #ffffff);
   padding: 14px;
 }
 .le-hist h2 {
@@ -100,22 +97,22 @@
 .le-status {
   flex: none;
   padding: 10px 14px;
-  background: var(--ink, #e8e9ec);
-  color: var(--bg, #131416);
+  background: var(--ink, #222a31);
+  color: var(--bg, #ffffff);
   font-size: 0.9rem;
 }
 .le-status.bad {
-  background: var(--danger, #f08477);
-  color: #1a0906;
+  background: var(--danger, #c4392b);
+  color: #ffffff;
 }
 
 .le-msg {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   padding: 14px;
   margin: 0;
 }
 .le-msg.bad {
-  color: var(--danger, #f08477);
+  color: var(--danger, #c4392b);
 }
 
 /* the placeholder card for types without a viewer yet */
@@ -131,7 +128,7 @@
   overflow-wrap: anywhere;
 }
 .le-card .le-meta {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   margin: 0 0 6px;
 }
 .le-card .le-msg {
@@ -143,9 +140,9 @@
   min-width: 64px;
   height: 48px;
   padding: 0 10px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 8px;
-  color: var(--mute, #8f929b);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  color: var(--mute, #68737d);
   text-transform: uppercase;
   font-size: 0.85rem;
 }
@@ -160,7 +157,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  border-top: 1px solid var(--line, #2c2e34);
+  border-top: 1px solid var(--line, #dfe3e8);
 }
 .le-item:first-child {
   border-top: 0;
@@ -175,7 +172,7 @@
 }
 .le-iinfo small {
   display: block;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   font-size: 0.8rem;
 }
 @media (max-width: 560px) {
@@ -201,17 +198,17 @@
   margin: 0 14px 8px;
   padding: 14px 16px;
   min-height: 52px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 10px;
-  background: var(--card, #1c1d21);
-  color: var(--ink, #e8e9ec);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--card, #f6f8fa);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 1rem;
   cursor: pointer;
   text-align: left;
 }
 #ledlg .le-table-card:hover {
-  border-color: var(--mute, #8f929b);
+  border-color: var(--mute, #68737d);
 }
 .le-table-name {
   flex: 1;
@@ -223,7 +220,7 @@
 .le-table-rows {
   flex: none;
   margin-left: 12px;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   font-size: 0.85rem;
 }
 
@@ -242,9 +239,9 @@
   gap: 8px;
   margin: 4px 14px;
   padding: 8px 12px;
-  border-radius: 8px;
-  background: var(--acc, #8ea2ff);
-  color: var(--accInk, #0c1022);
+  border-radius: 3px;
+  background: var(--acc, #2f7ab8);
+  color: var(--accInk, #ffffff);
   font-size: 0.88rem;
   font-weight: 600;
   position: sticky;
@@ -259,23 +256,23 @@
   min-height: 40px;
   padding: 6px 12px;
   font-size: 0.85rem;
-  background: var(--card, #1c1d21);
-  color: var(--ink, #e8e9ec);
-  border-color: var(--line, #2c2e34);
+  background: var(--card, #f6f8fa);
+  color: var(--ink, #222a31);
+  border-color: var(--line, #dfe3e8);
 }
 #ledlg .le-pending .btn.primary {
-  background: var(--ink, #e8e9ec);
-  color: var(--accInk, #0c1022);
-  border-color: var(--ink, #e8e9ec);
+  background: var(--ink, #222a31);
+  color: var(--accInk, #ffffff);
+  border-color: var(--ink, #222a31);
 }
 
 /* review panel: the list of staged changes before saving */
 .le-review {
   margin: 4px 14px;
   padding: 10px 12px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 8px;
-  background: var(--card, #1c1d21);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--card, #f6f8fa);
 }
 .le-review h3 {
   margin: 0 0 8px;
@@ -287,7 +284,7 @@
   flex-wrap: wrap;
   gap: 4px 8px;
   padding: 6px 0;
-  border-top: 1px solid var(--line, #2c2e34);
+  border-top: 1px solid var(--line, #dfe3e8);
   font-size: 0.88rem;
 }
 .le-review-item:first-of-type {
@@ -298,14 +295,14 @@
   min-width: 80px;
 }
 .le-review-old {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   text-decoration: line-through;
 }
 .le-review-arrow {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
 }
 .le-review-new {
-  color: var(--acc, #8ea2ff);
+  color: var(--acc, #2f7ab8);
   font-weight: 600;
 }
 .le-review-actions {
@@ -325,15 +322,15 @@
   margin: 8px 14px;
   padding: 10px 12px;
   min-height: 44px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 8px;
-  background: var(--card, #1c1d21);
-  color: var(--ink, #e8e9ec);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--card, #f6f8fa);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 1rem;
 }
 .le-search:focus {
-  outline: 2px solid var(--acc, #8ea2ff);
+  outline: 2px solid var(--acc, #2f7ab8);
   outline-offset: 0;
 }
 
@@ -341,13 +338,13 @@
 .le-cascade-note {
   margin: 0 14px 4px;
   padding: 0;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   font-size: 0.82rem;
 }
 
 .le-total {
   padding: 6px 14px;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   font-size: 0.85rem;
 }
 
@@ -356,9 +353,9 @@
 }
 
 .le-row-card {
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 10px;
-  background: var(--card, #1c1d21);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--card, #f6f8fa);
   padding: 10px 14px;
   margin-bottom: 10px;
 }
@@ -368,7 +365,7 @@
   align-items: baseline;
   gap: 8px;
   padding: 4px 0;
-  border-top: 1px solid var(--line, #2c2e34);
+  border-top: 1px solid var(--line, #dfe3e8);
 }
 .le-field:first-child {
   border-top: 0;
@@ -378,7 +375,7 @@
   flex: none;
   min-width: 90px;
   font-size: 0.82rem;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
 }
 .le-field-val {
   flex: 1;
@@ -390,12 +387,12 @@
 /* non-editable columns (auto number, calculated) */
 .le-field.muted .le-field-name,
 .le-field.muted .le-field-val {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
 }
 
 /* a field that has a staged change gets a left accent bar */
 .le-field.changed {
-  border-left: 3px solid var(--acc, #8ea2ff);
+  border-left: 3px solid var(--acc, #2f7ab8);
   padding-left: 8px;
 }
 
@@ -407,16 +404,16 @@
 #ledlg .le-chip {
   min-height: 44px;
   padding: 6px 14px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 20px;
-  background: var(--card, #1c1d21);
-  color: var(--ink, #e8e9ec);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 4px;
+  background: var(--card, #f6f8fa);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 0.9rem;
   cursor: pointer;
 }
 #ledlg .le-chip:hover {
-  border-color: var(--mute, #8f929b);
+  border-color: var(--mute, #68737d);
 }
 .le-dd {
   position: absolute;
@@ -426,11 +423,11 @@
   min-width: 140px;
   max-height: 220px;
   overflow-y: auto;
-  margin-top: 4px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 8px;
-  background: var(--card, #1c1d21);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  margin-top: 2px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--card, #f6f8fa);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 #ledlg .le-dd-item {
   display: block;
@@ -439,17 +436,17 @@
   padding: 8px 14px;
   border: 0;
   background: none;
-  color: var(--ink, #e8e9ec);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 0.9rem;
   text-align: left;
   cursor: pointer;
 }
 #ledlg .le-dd-item:hover {
-  background: var(--line, #2c2e34);
+  background: var(--line, #dfe3e8);
 }
 #ledlg .le-dd-item.sel {
-  color: var(--acc, #8ea2ff);
+  color: var(--acc, #2f7ab8);
   font-weight: 600;
 }
 
@@ -462,10 +459,10 @@
   min-width: 0;
   min-height: 44px;
   padding: 6px 10px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 6px;
-  background: var(--bg, #131416);
-  color: var(--ink, #e8e9ec);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--bg, #ffffff);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 1rem;
 }
@@ -474,10 +471,10 @@
   min-width: 0;
   min-height: 88px;
   padding: 8px 10px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 6px;
-  background: var(--bg, #131416);
-  color: var(--ink, #e8e9ec);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--bg, #ffffff);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 1rem;
   resize: vertical;
@@ -485,7 +482,7 @@
 .le-field input[type="checkbox"] {
   width: 28px;
   height: 28px;
-  accent-color: var(--acc, #8ea2ff);
+  accent-color: var(--acc, #2f7ab8);
 }
 
 #ledlg .le-more {
@@ -500,8 +497,8 @@
   overflow: auto;
   max-height: 70vh;
   max-height: 70dvh;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 8px;
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
   -webkit-overflow-scrolling: touch;
 }
 .le-grid {
@@ -514,9 +511,9 @@
 .le-grid th,
 .le-grid td {
   padding: 8px 10px;
-  border-bottom: 1px solid var(--line, #2c2e34);
-  border-right: 1px solid var(--line, #2c2e34);
-  background: var(--card, #1c1d21);
+  border-bottom: 1px solid var(--line, #dfe3e8);
+  border-right: 1px solid var(--line, #dfe3e8);
+  background: var(--card, #f6f8fa);
   max-width: 280px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -527,14 +524,14 @@
   position: sticky;
   top: 0;
   z-index: 2;
-  background: var(--bg, #131416);
+  background: var(--bg, #ffffff);
   font-weight: 600;
   cursor: pointer;
   user-select: none;
 }
 .le-grid th.muted,
 .le-grid td.muted {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
 }
 .le-grid td.num {
   text-align: right;
@@ -555,7 +552,7 @@
   padding: 4px;
 }
 .le-grid td.changed {
-  box-shadow: inset 3px 0 0 var(--acc, #8ea2ff);
+  box-shadow: inset 3px 0 0 var(--acc, #2f7ab8);
 }
 .le-grid td input:not([type="checkbox"]),
 .le-grid td select,
@@ -564,20 +561,20 @@
   min-width: 130px;
   min-height: 44px;
   padding: 6px 8px;
-  border: 1px solid var(--line, #2c2e34);
-  border-radius: 6px;
-  background: var(--bg, #131416);
-  color: var(--ink, #e8e9ec);
+  border: 1px solid var(--line, #dfe3e8);
+  border-radius: 3px;
+  background: var(--bg, #ffffff);
+  color: var(--ink, #222a31);
   font: inherit;
   font-size: 1rem;
 }
 .le-grid td input[type="checkbox"] {
   width: 28px;
   height: 28px;
-  accent-color: var(--acc, #8ea2ff);
+  accent-color: var(--acc, #2f7ab8);
 }
 
-/* ── Phase 4: CSV / TSV grid ─────────────────────────────────────────────── */
+/* CSV / TSV grid */
 .le-csv-root {
   display: flex;
   flex-direction: column;
@@ -600,19 +597,19 @@
   z-index: 2;
 }
 .le-csv-th {
-  background: var(--card, #1a1c21);
-  border: 1px solid var(--line, #2c2e34);
+  background: var(--card, #f6f8fa);
+  border: 1px solid var(--line, #dfe3e8);
   padding: 5px 8px;
   text-align: left;
   font-weight: 600;
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
   user-select: none;
 }
 .le-csv-rnum {
   width: 36px;
   min-width: 36px;
   text-align: center;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   font-size: 0.78rem;
 }
 .le-csv-del-hd {
@@ -621,10 +618,10 @@
   padding: 0;
 }
 .le-csv-tr:hover {
-  background: rgba(142, 162, 255, 0.05);
+  background: rgba(47, 122, 184, 0.05);
 }
 .le-csv-td {
-  border: 1px solid var(--line, #2c2e34);
+  border: 1px solid var(--line, #dfe3e8);
   padding: 0;
   max-width: 260px;
   vertical-align: middle;
@@ -645,17 +642,17 @@
   min-width: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
 }
 .le-csv-inp {
   display: block;
   width: 100%;
   min-width: 80px;
   box-sizing: border-box;
-  background: var(--card, #1a1c21);
-  border: 2px solid var(--acc, #8ea2ff);
+  background: var(--card, #f6f8fa);
+  border: 2px solid var(--acc, #2f7ab8);
   border-radius: 0;
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
   font-size: 0.84rem;
   padding: 3px 6px;
   outline: none;
@@ -663,7 +660,7 @@
 .le-csv-del-btn {
   background: transparent;
   border: none;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   cursor: pointer;
   font-size: 0.82rem;
   padding: 3px 5px;
@@ -673,8 +670,8 @@
     background 0.15s;
 }
 .le-csv-del-btn:hover {
-  color: #f87171;
-  background: rgba(248, 113, 113, 0.12);
+  color: var(--danger, #c4392b);
+  background: rgba(196, 57, 43, 0.1);
 }
 #ledlg .le-csv-add-row {
   margin-right: 6px;
@@ -682,17 +679,17 @@
 #ledlg .le-csv-save {
 }
 
-/* ── Phase 4: plain text editor ─────────────────────────────────────────── */
+/* Plain text editor */
 .le-txt-area {
   display: block;
   width: 100%;
   height: 100%;
   min-height: 340px;
   box-sizing: border-box;
-  background: var(--bg, #131416);
+  background: var(--bg, #ffffff);
   border: none;
-  border-top: 1px solid var(--line, #2c2e34);
-  color: var(--ink, #e8eaf0);
+  border-top: 1px solid var(--line, #dfe3e8);
+  color: var(--ink, #222a31);
   font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
   font-size: 0.85rem;
   line-height: 1.55;
@@ -702,10 +699,10 @@
   tab-size: 4;
 }
 .le-txt-area:focus {
-  border-color: var(--acc, #8ea2ff);
+  border-color: var(--acc, #2f7ab8);
 }
 
-/* ── Phase 4: PDF viewer ─────────────────────────────────────────────────── */
+/* PDF viewer */
 .le-pdf-wrap {
   display: flex;
   flex-direction: column;
@@ -718,10 +715,10 @@
   width: 100%;
   height: 100%;
   border: none;
-  background: var(--bg, #131416);
+  background: var(--bg, #ffffff);
 }
 
-/* ── Excel / Spreadsheet viewer (.le-xls-*) ─────────────────────────────── */
+/* Excel / Spreadsheet viewer (.le-xls-*) */
 /* The table grid reuses .le-csv-* classes — only the root and tab bar are new */
 
 .le-xls-root {
@@ -736,8 +733,8 @@
   display: flex;
   gap: 2px;
   padding: 6px 8px 0;
-  background: var(--card, #1a1c21);
-  border-bottom: 2px solid var(--line, #2c2e34);
+  background: var(--card, #f6f8fa);
+  border-bottom: 2px solid var(--line, #dfe3e8);
   flex-shrink: 0;
   overflow-x: auto;
   scrollbar-width: none;
@@ -748,10 +745,10 @@
 
 .le-xls-tab {
   background: transparent;
-  border: 1px solid var(--line, #2c2e34);
+  border: 1px solid var(--line, #dfe3e8);
   border-bottom: none;
   border-radius: 4px 4px 0 0;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   cursor: pointer;
   font-size: 0.82rem;
   padding: 5px 14px;
@@ -762,20 +759,20 @@
   flex-shrink: 0;
 }
 .le-xls-tab:hover {
-  color: var(--ink, #e8eaf0);
-  background: rgba(142, 162, 255, 0.08);
+  color: var(--ink, #222a31);
+  background: rgba(47, 122, 184, 0.08);
 }
 .le-xls-tab.on {
-  background: var(--bg, #131416);
-  color: var(--ink, #e8eaf0);
-  border-color: var(--acc, #8ea2ff);
-  border-bottom-color: var(--bg, #131416); /* visually merges with table area */
+  background: var(--bg, #ffffff);
+  color: var(--ink, #222a31);
+  border-color: var(--acc, #2f7ab8);
+  border-bottom-color: var(--bg, #ffffff); /* visually merges with table area */
   font-weight: 600;
   position: relative;
   bottom: -2px; /* overlap the tab bar border */
 }
 
-/* ── Generic SQLite viewer ───────────────────────────────────────────────── */
+/* Generic SQLite viewer */
 
 .gdb-root {
   display: flex;
@@ -789,7 +786,7 @@
   align-items: center;
   gap: 16px;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--line, #2c2e34);
+  border-bottom: 1px solid var(--line, #dfe3e8);
   flex-shrink: 0;
   flex-wrap: wrap;
 }
@@ -797,15 +794,15 @@
 .gdb-table-lbl,
 .gdb-ps-lbl {
   font-size: 0.82rem;
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
 }
 
 .gdb-table-sel,
 .gdb-ps-sel {
-  background: var(--card, #1a1c21);
-  border: 1px solid var(--line, #2c2e34);
+  background: var(--card, #f6f8fa);
+  border: 1px solid var(--line, #dfe3e8);
   border-radius: 4px;
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
   font-size: 0.82rem;
   padding: 3px 7px;
   margin-left: 5px;
@@ -832,9 +829,9 @@
 }
 
 .gdb-th {
-  background: var(--card, #1a1c21);
-  border: 1px solid var(--line, #2c2e34);
-  color: var(--mute, #8f929b);
+  background: var(--card, #f6f8fa);
+  border: 1px solid var(--line, #dfe3e8);
+  color: var(--mute, #68737d);
   font-weight: 600;
   padding: 5px 10px;
   text-align: left;
@@ -846,24 +843,24 @@
 }
 
 .gdb-th-name {
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
 }
 .gdb-th-name:hover {
-  color: var(--acc, #8ea2ff);
+  color: var(--acc, #2f7ab8);
 }
 .gdb-pk {
-  color: var(--acc, #8ea2ff);
+  color: var(--acc, #2f7ab8);
 }
 
 .gdb-filter-td {
   padding: 3px 5px;
-  background: var(--card, #1a1c21);
+  background: var(--card, #f6f8fa);
 }
 .gdb-filter-inp {
-  background: var(--bg, #131416);
-  border: 1px solid var(--line, #2c2e34);
+  background: var(--bg, #ffffff);
+  border: 1px solid var(--line, #dfe3e8);
   border-radius: 3px;
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
   font-size: 0.78rem;
   padding: 2px 6px;
   width: 100%;
@@ -871,12 +868,12 @@
 }
 .gdb-filter-inp:focus {
   outline: none;
-  border-color: var(--acc, #8ea2ff);
+  border-color: var(--acc, #2f7ab8);
 }
 
 .gdb-td {
-  border: 1px solid var(--line, #2c2e34);
-  color: var(--ink, #e8eaf0);
+  border: 1px solid var(--line, #dfe3e8);
+  color: var(--ink, #222a31);
   padding: 4px 10px;
   vertical-align: top;
   white-space: nowrap;
@@ -886,24 +883,24 @@
 }
 
 .gdb-tr:nth-child(even) .gdb-td {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.025);
 }
 .gdb-tr:hover .gdb-td {
-  background: rgba(142, 162, 255, 0.06);
+  background: rgba(47, 122, 184, 0.06);
 }
 
 .gdb-editable {
   cursor: pointer;
 }
 .gdb-editable:hover {
-  background: rgba(142, 162, 255, 0.12) !important;
+  background: rgba(47, 122, 184, 0.12) !important;
 }
 
 .gdb-cell-inp {
-  background: var(--bg, #131416);
-  border: 1px solid var(--acc, #8ea2ff);
+  background: var(--bg, #ffffff);
+  border: 1px solid var(--acc, #2f7ab8);
   border-radius: 3px;
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
   font-size: 0.82rem;
   padding: 1px 5px;
   width: 100%;
@@ -912,7 +909,7 @@
 }
 
 .gdb-empty {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   font-style: italic;
   text-align: center;
   padding: 24px;
@@ -923,19 +920,107 @@
   align-items: center;
   gap: 12px;
   padding: 7px 12px;
-  border-top: 1px solid var(--line, #2c2e34);
+  border-top: 1px solid var(--line, #dfe3e8);
   flex-shrink: 0;
   font-size: 0.82rem;
 }
 
 .gdb-page-info {
-  color: var(--mute, #8f929b);
+  color: var(--mute, #68737d);
   margin-left: auto;
 }
 .gdb-page-num {
-  color: var(--ink, #e8eaf0);
+  color: var(--ink, #222a31);
 }
 .gdb-page-btn {
   padding: 3px 10px;
   font-size: 0.8rem;
+}
+
+/* v2.1: Word document viewer (.doc / .docx) */
+
+.le-doc-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.le-doc-content {
+  flex: 1;
+  overflow: auto;
+  padding: 0;
+}
+
+/* the HTML produced by mammoth or LibreOffice goes in here */
+.le-doc-body {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--ink, #222a31);
+}
+
+.le-doc-body h1,
+.le-doc-body h2,
+.le-doc-body h3,
+.le-doc-body h4,
+.le-doc-body h5,
+.le-doc-body h6 {
+  margin: 1.1em 0 0.4em;
+  font-family: inherit;
+  font-weight: 600;
+}
+
+.le-doc-body p {
+  margin: 0 0 0.7em;
+}
+.le-doc-body ul,
+.le-doc-body ol {
+  padding-left: 1.6em;
+  margin-bottom: 0.7em;
+}
+.le-doc-body table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 1em;
+  font-size: 0.92rem;
+}
+.le-doc-body td,
+.le-doc-body th {
+  border: 1px solid var(--line, #dfe3e8);
+  padding: 4px 8px;
+  text-align: left;
+}
+
+/* sandboxed iframe for LibreOffice-converted .doc HTML */
+.le-doc-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff; /* LibreOffice HTML is light-themed */
+}
+
+.le-doc-err {
+  color: var(--danger, #c4392b);
+  padding: 16px 20px;
+  margin: 0;
+}
+
+.le-doc-hint {
+  color: var(--mute, #68737d);
+  font-size: 0.83rem;
+  font-family: monospace;
+  padding: 0 20px 16px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.le-doc-warn {
+  color: var(--mute, #68737d);
+  font-size: 0.8rem;
+  padding: 8px 20px 0;
+  margin: 0;
 }

@@ -1,20 +1,10 @@
 #pragma once
 
-// sqlite_db.h (v2.0.0): SQLite database viewer
-//
-// Generic table schema inspection, paginated rows, and cell editing for any
-// .sqlite or .db file in the drive.
-//
-// Endpoints:
-//   GET  /api/db/schema?name=<relpath>
-//   GET  /api/db/generic/rows?name=<relpath>&table=...
-//   POST /api/db/generic/save
-
 #include "httplib.h"
 #include "liveedit.h"
 
-#include <sqlite3.h>
 #include <iostream>
+#include <sqlite3.h>
 #include <string>
 
 // -- tiny sqlite wrapper --
@@ -35,8 +25,12 @@ struct Db {
       }
       return false;
     }
-    sqlite3_busy_timeout(h, 5000); // wait up to 5s if another write is in flight
+    sqlite3_busy_timeout(h,
+                         5000); // wait up to 5s if another write is in flight
     exec("PRAGMA journal_mode=WAL");
+    exec("PRAGMA synchronous = NORMAL;"); // v2.1: safe in WAL mode, no fsync on
+                                          // every write
+    exec("PRAGMA cache_size = -32000;");  // v2.1: 32 MB page cache in RAM
     exec("PRAGMA foreign_keys=ON");
     return true;
   }

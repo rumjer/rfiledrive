@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <path d="M6 5a2 2 0 0 1 2-2h11l7 7v17a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5Z" fill="#fee2e2"/>
+  <path d="M19 3v5a2 2 0 0 0 2 2h5" fill="#fca5a5"/>
+  <rect x="8" y="14" width="16" height="11" rx="2" fill="#ef4444"/>
+  <text x="16" y="22.5" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#ffffff" text-anchor="middle">PDF</text>
+</svg>

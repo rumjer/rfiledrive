@@ -1,14 +1,7 @@
 #pragma once
 
-// liveedit (v2.0.0, phase 1): safe saving + version history
-//
-// everything that overwrites a file goes through here, so a bad save can
-// never destroy the only copy:
-//   1. the old file is copied into <root>-versions/ first
-//   2. the new content is written to a temp file and renamed over the old one
-//      (so the file is always either the old or the new content, never half)
-//
-// later phases (access editor, office editor) reuse these same helpers
+// NOTE: this file might include random leftover stuff from when i was trying to
+// import live editing for accdb and other stuff, ignore that, i was too lazy to remove
 
 #include <cstddef>
 #include <mutex>
@@ -16,7 +9,7 @@
 
 #include "mainfunctions.h" // fs, json, safePath, baseDir
 
-// forward declaration so this header doesn't pull in the huge httplib.h
+// forward declaration so this header doesnt pull all httplib.h
 namespace httplib {
 class Server;
 }
@@ -24,19 +17,20 @@ class Server;
 // -- settings (change here) --
 
 // biggest request body the server accepts (uploads and saves).
-// httplib's own default is only 100MB
+// httplibss own default is only 100mb
 constexpr size_t MAX_PAYLOAD_BYTES = 512ULL * 1024 * 1024;
 
 // a version is only deleted if it is BOTH outside the newest N versions of
-// that file AND older than the max age
+// that file and older than the max age
 constexpr int VERSIONS_KEEP_NEWEST = 30;
 constexpr long long VERSIONS_MAX_AGE_SECONDS = 30LL * 24 * 3600;
 
-// hard cap: versions beyond this number are removed unconditionally regardless
-// of age. prevents disk bloat from rapid cell-edits (every db save = one .bak)
+// hard cap, versions beyond this number are removed unconditionally regardless
+// of age. one might make a lot of tiny changes and save them evreytime, you can
+// edit this number to your liking, i think 25 is enough. i dont want too much bloat
 constexpr int VERSIONS_MAX_PER_FILE = 25;
 
-// leftover temp files older than this are removed (e.g. after a crash)
+// leftover temp files older than this are removed (after a crash)
 constexpr long long STALE_TEMP_SECONDS = 3600;
 
 // temp files are named <TEMP_PREFIX><random> and live next to the real file
@@ -46,13 +40,13 @@ constexpr const char *TEMP_PREFIX = ".rfd-tmp-";
 
 enum class SaveResult {
   Ok,
-  NotFound,       // file (or version) doesn't exist
+  NotFound,       // file (or version) doesnt exist
   Invalid,        // not a regular file, or empty content over a real file
   Conflict,       // the file changed since the client loaded it
   FormatMismatch, // new bytes are a different kind of file than the old ones
   TooLarge,
-  BackupFailed, // couldn't save the old version, so nothing was changed
-  WriteFailed   // couldn't write the new file, old file is untouched
+  BackupFailed, // couldnt save the old version, so nothing was changed
+  WriteFailed   // couldnt write the new file, old file is untouched
 };
 
 // one lock for everything that writes or backs up files.
@@ -65,7 +59,7 @@ fs::path versionsDir();
 
 // "<size>-<mtime in ns>", changes whenever the file is written.
 // the client sends it back when saving so we can tell if someone else
-// changed the file in the meantime. empty string = file doesn't exist
+// changed the file in the meantime. empty string = file doesnt exist
 std::string fileVersionToken(const fs::path &file);
 
 // copies the current file into the versions folder (caller holds writeMutex)
@@ -81,9 +75,9 @@ void purgeOldVersions(int keepNewest = VERSIONS_KEEP_NEWEST,
 // removes leftover temp files under the files folder
 void cleanStaleTempFiles(long long olderThanSeconds = STALE_TEMP_SECONDS);
 
-// renames readyTemp over target (atomic). readyTemp must be in the SAME
+// renames readyTemp over target (atomic). readyTemp must be in the same
 // folder as target. durable = also flush to disk before and after, so a power
-// cut can't lose the new content. on failure the temp file is left for the
+// cut cant lose the new content. on failure the temp file is left for the
 // caller to delete
 bool atomicReplaceFile(const fs::path &target, const fs::path &readyTemp,
                        bool durable = true);

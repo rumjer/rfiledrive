@@ -1,6 +1,7 @@
 #include "httplib.h"
 #include "liveedit.h"
 #include "mainfunctions.h"
+#include "pins.h"
 #include "sqlite_db.h"
 
 #ifdef HAS_HARDCODEDCODE
@@ -240,7 +241,8 @@ int main() {
         }
 
         std::string jpeg;
-        if (!heicToJpeg(filePath, size, jpeg)) {
+        if (!heicToJpegCached(filePath, size,
+                              jpeg)) { // v2.1-something: served from disk cache
           res.status = 500;
           res.set_content("could not decode image", "text/plain");
           return;
@@ -293,6 +295,9 @@ int main() {
     res.set_content(storageInfo().dump(), "application/json");
   });
 
+  // v2.1: /api/pins (shared sidebar pinned folders)
+  registerPinRoutes(svr);
+
   // v2.0: /api/fileinfo, /api/save and /api/versions (see liveedit.cpp)
   registerLiveEditRoutes(svr);
 
@@ -319,6 +324,15 @@ int main() {
   const char *www = std::getenv("FILES_WWW");
   const char *host = std::getenv("FILES_HOST");
   const char *port = std::getenv("FILES_PORT");
+
+  // v2.1, vendor libraries are content-addressed bundles that never change
+  // between releases, so we tell browsers to cache them for 1 year
+  svr.set_pre_routing_handler([](const httplib::Request &req,
+                                 httplib::Response &res) {
+    if (req.path.rfind("/vendor/", 0) == 0)
+      res.set_header("Cache-Control", "public, max-age=31536000, immutable");
+    return httplib::Server::HandlerResponse::Unhandled;
+  });
 
   svr.set_mount_point("/", www ? www : "./www");
   svr.listen(host ? host : "0.0.0.0", port ? std::stoi(port) : 8080);

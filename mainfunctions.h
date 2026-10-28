@@ -46,3 +46,9 @@ OpResult moveStuff(const fs::path &src, const fs::path &destDir);
 OpResult renameStuff(const fs::path &src, const std::string &newName);
 bool isHeic(const fs::path &path);
 bool heicToJpeg(const fs::path &path, int maxSide, std::string &outJpeg);
+// v2.1
+// disk-cached variant of heicToJpeg
+// on first call the heic is decoded and the jpeg thumbnail is saved to
+// /tmp/rfd-thumbnails/<hash>.jpg; other requests for the same file
+// at the same size are served directly from that cache file
+bool heicToJpegCached(const fs::path &path, int maxSide, std::string &outJpeg);

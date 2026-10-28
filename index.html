@@ -3,120 +3,239 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="light">
 <title>Files</title>
 <style>
-:root{color-scheme:dark;--bg:#131416;--card:#1c1d21;--ink:#e8e9ec;--mute:#8f929b;--line:#2c2e34;--acc:#8ea2ff;--accInk:#0c1022;--tab:#c9a04a;--danger:#f08477}
+:root{color-scheme:light;--bg:#ffffff;--card:#f6f8fa;--side:#f4f6f8;--top:#e2ecf6;--ink:#222a31;--mute:#68737d;--line:#dfe3e8;--hover:#f1f5f9;--sel:#e1ecf8;--acc:#2f7ab8;--accInk:#ffffff;--tab:#e0b24a;--danger:#c4392b;--track:#e3e8ed}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
-main{max-width:760px;margin:0 auto;padding:20px 14px 70px}
-header{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;justify-content:space-between;margin-bottom:16px}
-#crumbs{font:1.35rem/1.25 Georgia,"Iowan Old Style",serif;color:var(--mute);overflow-wrap:anywhere}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+
+/* top bar */
+.topbar{height:50px;display:flex;align-items:center;gap:16px;padding:0 18px;background:var(--top);border-bottom:1px solid #c9d9ea;font-size:1.05rem;font-weight:600}
+
+/* layout: sidebar + content */
+.layout{display:flex;min-height:calc(100vh - 50px)}
+.side{flex:none;width:230px;background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;align-self:flex-start;height:calc(100vh - 50px)}
+.sidenav{flex:none;display:flex;flex-direction:column;gap:2px;padding:10px 8px}
+.sidenav a,.sidenav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;border-radius:3px;background:none;padding:9px 12px;color:var(--ink);font:inherit;text-decoration:none;cursor:pointer}
+.sidenav a:hover,.sidenav button:hover{background:rgba(0,0,0,.05)}
+.sidenav .on{background:var(--sel);font-weight:600;color:var(--acc)}
+.sidenav svg{flex:none;width:18px;height:18px;stroke:currentColor;display:block}
+#stobar{margin-top:auto;padding:12px 16px 14px;border-top:1px solid var(--line);cursor:pointer;font-size:.85rem;color:var(--mute)}
+#stobar:hover{background:rgba(0,0,0,.04)}
+#stobar .sbar{height:4px;background:var(--track);border-radius:2px;overflow:hidden;margin-top:7px}
+#stobar .sbar i{display:block;height:100%;background:var(--acc);transition:width .3s}
+
+main{flex:1;min-width:0;padding:0 24px 90px}
+header.pagebar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;min-height:58px;padding:10px 0;border-bottom:1px solid var(--line)}
+#crumbs{color:var(--mute);overflow-wrap:anywhere}
 #crumbs a{color:var(--mute);text-decoration:none}
 #crumbs a:hover{color:var(--acc);text-decoration:underline}
 #crumbs strong{color:var(--ink);font-weight:600}
 .tools{display:flex;gap:8px;flex-wrap:wrap}
-button,.btn{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer;text-decoration:none;display:inline-block}
-button:hover,.btn:hover{border-color:var(--mute)}
-.primary{background:var(--acc);border-color:var(--acc);color:var(--accInk);font-weight:600}
+
+/* buttons */
+button,.btn{font:inherit;font-size:.9rem;border:1px solid #c7cdd4;background:#fff;color:var(--ink);border-radius:3px;padding:6px 13px;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover,.btn:hover{background:var(--hover);border-color:#aab3bc}
+button:disabled{opacity:.5;cursor:default}
+.primary{background:var(--acc);border-color:var(--acc);color:var(--accInk)}
+.primary:hover{background:#276aa0;border-color:#276aa0}
 .danger{color:var(--danger)}
-[hidden]{display:none!important}
-:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-ul{list-style:none;margin:0;padding:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.row{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid var(--line)}
-.row:first-child{border-top:0}
-.name{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;border:0;background:none;padding:8px 4px;font-size:1rem;color:var(--ink)}
-.name:hover{border:0}
+
+/* file list */
+ul{list-style:none;margin:0;padding:0}
+#list{margin-top:0}
+.row{display:flex;align-items:center;gap:8px;padding:0 8px;min-height:52px;border-bottom:1px solid var(--line)}
+.row:hover{background:var(--hover)}
+.row:has(.row-cb:checked){background:var(--sel)}
+.ic-wrap{flex:none;width:38px;height:38px;display:grid;place-items:center}
+.ic-img{width:32px;height:32px;object-fit:contain;display:block}
+.name{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;border:0;border-radius:0;background:none;padding:8px 4px;font-size:1rem;color:var(--ink)}
+.name:hover{border:0;background:none}
 .name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .info{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:8px 4px}
 .info>span:last-child{min-width:0}
 .info b{display:block;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .info small{display:block;color:var(--mute);font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.acts{display:flex;gap:6px;flex:none}
-.ic{flex:none;width:38px;height:28px;border:1px solid var(--line);border-radius:4px;font-size:.7rem;color:var(--mute);display:grid;place-items:center}
-.ic.dir{position:relative;border:0;background:var(--tab);border-radius:2px 5px 5px 5px;margin-top:4px}
-.ic.dir::before{content:"";position:absolute;left:0;top:-4px;width:16px;height:5px;background:var(--tab);border-radius:3px 3px 0 0}
-.empty{padding:32px 16px;text-align:center;color:var(--mute)}
-.note{color:var(--mute);font-size:.85rem;margin:0 2px 10px}
-#st{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:8px;font-size:.9rem;max-width:90vw}
-#st.bad{background:var(--danger);color:#1a0906}
-dialog{width:min(920px,96vw);max-height:94vh;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
-dialog::backdrop{background:rgba(0,0,0,.7)}
+.acts{display:flex;gap:2px;flex:none}
+.acts button,.acts .btn{border-color:transparent;background:none;padding:6px 10px}
+.acts button:hover,.acts .btn:hover{background:rgba(0,0,0,.06);border-color:transparent}
+@media (hover:hover){.acts{opacity:0}.row:hover .acts,.row:focus-within .acts{opacity:1}}
+.empty{padding:64px 16px;text-align:center;color:var(--mute)}
+.note{color:var(--mute);font-size:.85rem;margin:12px 0 0}
+
+/* toast */
+#st{position:fixed;left:50%;top:60px;transform:translateX(-50%);background:#fff;color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--acc);padding:9px 14px;border-radius:3px;font-size:.9rem;max-width:90vw;box-shadow:0 2px 6px rgba(0,0,0,.15);z-index:100}
+#st.bad{border-left-color:var(--danger)}
+
+/* dialogs */
+dialog{width:min(920px,96vw);max-height:94vh;padding:0;border:1px solid #c7cdd4;border-radius:3px;background:var(--bg);color:var(--ink);box-shadow:0 4px 18px rgba(0,0,0,.2)}
+dialog::backdrop{background:rgba(30,40,50,.45)}
 .pvhead,.pvfoot{display:flex;gap:8px;align-items:center;padding:10px 12px}
-.pvhead span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#pvbody{background:#000;display:grid;place-items:center}
+.pvhead{border-bottom:1px solid var(--line)}
+.pvfoot{border-top:1px solid var(--line)}
+.pvhead span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+#pvbody{background:#eceff2;display:grid;place-items:center}
 #pvbody img,#pvbody video{max-width:100%;max-height:72vh}
-#ups{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+
+/* upload progress */
+#ups{background:var(--card);border:1px solid var(--line);border-radius:3px;padding:12px 14px;margin-top:12px}
 .uphead,.uprow{display:flex;justify-content:space-between;gap:12px;font-size:.85rem}
 .uphead{margin-bottom:6px}
-.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar{height:5px;background:var(--track);border-radius:2px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--acc)}
 .uprow{margin-top:10px;color:var(--mute)}
 .uprow span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .uprow+.bar{height:4px;margin-top:4px}
 .upmore{margin-top:10px;color:var(--mute);font-size:.85rem}
-#stobar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;z-index:50;font-size:.85rem;color:var(--mute);transition:background .15s}
-#stobar:hover{background:var(--line)}
-#stobar .sbar{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;max-width:320px}
-#stobar .sbar i{display:block;height:100%;background:var(--acc);border-radius:3px;transition:width .3s}
-#stobar .stxt{white-space:nowrap}
-#stodlg{width:min(640px,96vw);max-height:94vh;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
-#stodlg::backdrop{background:rgba(0,0,0,.7)}
-.stohead{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
-.stohead h2{margin:0;font-size:1.1rem;font-weight:600}
+
+/* storage dialog */
+#stodlg{width:min(640px,96vw)}
+.stohead{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.stohead h2{margin:0;font-size:1.05rem;font-weight:600}
 .stobody{padding:16px;overflow-y:auto;max-height:74vh}
-.stobody h3{font-size:.95rem;font-weight:600;margin:20px 0 8px;color:var(--ink)}
+.stobody h3{font-size:.95rem;font-weight:600;margin:20px 0 8px}
 .stobody h3:first-child{margin-top:0}
 .sto-disk{display:flex;gap:12px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
-.sto-disk .sbar{flex:1;height:10px;background:var(--line);border-radius:5px;overflow:hidden;min-width:120px}
-.sto-disk .sbar i{display:block;height:100%;background:var(--acc);border-radius:5px}
+.sto-disk .sbar{flex:1;height:8px;background:var(--track);border-radius:4px;overflow:hidden;min-width:120px}
+.sto-disk .sbar i{display:block;height:100%;background:var(--acc)}
 .sto-disk span{font-size:.9rem;white-space:nowrap}
 .sto-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:.88rem}
 .sto-row:last-child{border-bottom:0}
 .sto-row .sr-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;margin-right:10px}
 .sto-row .sr-size{flex:none;color:var(--mute);white-space:nowrap}
-.sto-row .sr-bar{flex:none;width:80px;height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-left:8px}
-.sto-row .sr-bar i{display:block;height:100%;background:var(--acc);border-radius:2px}
+.sto-row .sr-bar{flex:none;width:80px;height:4px;background:var(--track);border-radius:2px;overflow:hidden;margin-left:8px}
+.sto-row .sr-bar i{display:block;height:100%;background:var(--acc)}
 .sto-subs{padding-left:20px;margin-bottom:4px}
 .sto-subs .sto-row{color:var(--mute);font-size:.82rem}
-#mvdlg{width:min(520px,96vw);max-height:90vh;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink)}
-#mvdlg::backdrop{background:rgba(0,0,0,.7)}
+
+/* move dialog */
+#mvdlg{width:min(520px,96vw);max-height:90vh}
 .mvhead,.mvfoot{display:flex;gap:8px;align-items:center;padding:12px 14px}
+.mvhead{font-weight:600}
 .mvhead span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mvfoot{justify-content:flex-end}
 #mvcur{padding:0 14px 8px;color:var(--mute);font-size:.85rem;overflow-wrap:anywhere}
-#mvlist{max-height:46vh;overflow-y:auto;margin:0 14px}
+#mvlist{max-height:46vh;overflow-y:auto;margin:0 14px;border:1px solid var(--line)}
+#mvlist .row:last-child{border-bottom:0}
 #mvgo:disabled{opacity:.45;cursor:not-allowed}
-@media(max-width:560px){.row{flex-wrap:wrap}.acts{width:100%;justify-content:flex-end}}
+
+/* edit mode */
+#editBtn.active{background:var(--sel);border-color:#9dbfe0}
+.row-cb{flex:none;width:18px;height:18px;margin:0 2px 0 0;accent-color:var(--acc);cursor:pointer;display:none}
+body.editing .row-cb{display:block}
+body.editing .acts{display:none}
+#editbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid #c7cdd4;padding:10px 16px;display:none;align-items:center;gap:8px;z-index:60;font-size:.9rem}
+#editbar.on{display:flex}
+@media(min-width:761px){#editbar{left:230px}}
+#editbar .ecount{flex:1;color:var(--mute)}
+#editbar .ecount b{color:var(--ink)}
+
+/* search */
+.sidesearch{padding:10px 10px 2px}
+#q{display:block;width:100%;height:32px;padding:0 10px;border:1px solid #c7cdd4;border-radius:3px;background:#fff;color:var(--ink);font:inherit;font-size:.9rem}
+#q:focus{outline:2px solid var(--acc);outline-offset:0;border-color:var(--acc)}
+
+/* pinned folders */
+#pins{flex:1;min-height:0;overflow-y:auto;padding:6px 8px 8px;border-top:1px solid var(--line);margin-top:4px}
+.pinhead{padding:6px 12px 4px;font-size:.8rem;color:var(--mute)}
+#pindrop{display:none;margin:6px 4px 2px;padding:14px 10px;border:1px dashed #aab7c4;border-radius:3px;text-align:center;font-size:.85rem;color:var(--mute)}
+body.dragging #pindrop{display:block}
+body:not(.dragging) #pins.nopins .pinhead{display:none}
+#pindrop.over{background:var(--sel);border-color:var(--acc);color:var(--ink)}
+#pinlist .pinitem{display:flex;align-items:center;border-radius:3px}
+#pinlist .pinitem:hover{background:rgba(0,0,0,.05)}
+#pinlist .pinitem.on{background:var(--sel)}
+#pinlist .pinitem.on a{font-weight:600}
+#pinlist a{flex:1;min-width:0;display:flex;align-items:center;gap:8px;padding:7px 10px;color:var(--ink);text-decoration:none}
+#pinlist a img{width:18px;height:18px;flex:none}
+#pinlist a span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pinctl{display:none;flex:none;border:0;background:none;padding:2px 6px;color:var(--mute);line-height:1}
+.pinctl:hover{background:rgba(0,0,0,.08);border:0}
+.pinctl:disabled{opacity:.25}
+body.editing .pinctl{display:block}
+#pinlist .pinitem.drop-before{box-shadow:0 -2px 0 var(--acc)}
+#pinlist .pinitem.drop-after{box-shadow:0 2px 0 var(--acc)}
+.side.dragover #pins{background:rgba(47,122,184,.08)}
+#pinlist .pinitem.drop-into{background:var(--sel);box-shadow:inset 0 0 0 1px var(--acc)}
+.sidenav .drop-ok{background:#fbe9e7;box-shadow:inset 0 0 0 1px var(--danger)}
+.pinbtn{display:none;flex:none;border:0;background:none;padding:5px;border-radius:3px;color:#9aa4ad;line-height:0}
+body.editing .pinbtn{display:block}
+.pinbtn:hover{background:rgba(0,0,0,.06);border:0}
+.pinbtn.on{color:var(--acc)}
+.pinbtn.on path{fill:currentColor}
+
+/* narrow screens: sidebar turns into a strip under the top bar */
+@media(max-width:760px){
+  .layout{flex-direction:column}
+  .side{position:static;align-self:stretch;width:auto;height:auto;flex-direction:row;align-items:center;border-right:0;border-bottom:1px solid var(--line)}
+  .sidenav{flex:none;flex-direction:row;padding:6px 8px}
+  .sidenav a,.sidenav button{width:auto}
+  #stobar{margin:0 0 0 auto;border-top:0;padding:6px 14px;min-width:0}
+  .side{flex-wrap:wrap}
+  #pins{flex:none;width:100%;order:3;margin-top:0;padding:6px 8px}
+  #pinlist{display:flex;flex-wrap:wrap;gap:4px}
+  .sidesearch{flex:none;width:100%;padding:8px 8px 2px}
+  main{padding:0 12px 90px}
+}
+@media(max-width:560px) and (hover:hover){.acts{display:none}.row:hover .acts,.row:focus-within .acts{display:flex}}
+@media(max-width:560px) and (hover:none){.row{flex-wrap:wrap}.acts{width:100%;justify-content:flex-end}}
 </style>
-<link rel="stylesheet" href="liveedit.css">
+<link rel="stylesheet" href="liveedit.css?v=11">
 </head>
 <body>
-<main>
-  <header>
-    <nav id="crumbs" aria-label="Folder path"></nav>
-    <div class="tools">
-      <button id="mk">New folder</button>
-      <button id="up" class="primary">Upload</button>
-      <button id="updir">Upload folder</button>
-      <button id="tr" hidden>Trash</button>
-      <button id="back" hidden>Back to files</button>
-      <button id="empty" class="danger" hidden>Empty trash</button>
-      <input id="pick" type="file" multiple hidden>
-      <input id="pickdir" type="file" webkitdirectory multiple hidden>
+<div class="topbar"><span>Files</span></div>
+<div class="layout">
+  <aside class="side">
+    <div class="sidesearch" id="sq"><input id="q" type="search" placeholder="Search in this folder" aria-label="Search in this folder" autocomplete="off"></div>
+    <nav class="sidenav" aria-label="Places">
+      <a href="#" id="navfiles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+        <span>All files</span>
+      </a>
+      <button id="tr" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+        <span>Trash</span>
+      </button>
+    </nav>
+    <div id="pins">
+      <div class="pinhead">Pinned</div>
+      <ul id="pinlist"></ul>
+      <div id="pindrop">Drag the folder here</div>
     </div>
-  </header>
-  <p id="note" class="note" hidden>Deleted items stay here for 48 hours, then they are removed for good.</p>
-  <section id="ups" hidden>
-    <div id="upall">
-      <div class="uphead"><span id="uptxt"></span><span id="uppct"></span></div>
-      <div class="bar"><i id="upbar"></i></div>
+    <div id="stobar" hidden>
+      <span class="stxt" id="stotxt">Loading…</span>
+      <div class="sbar"><i id="stobarfill"></i></div>
     </div>
-    <div id="uprows"></div>
-    <div id="upmore" class="upmore" hidden></div>
-  </section>
-  <ul id="list"></ul>
-</main>
+  </aside>
+  <main>
+    <header class="pagebar">
+      <nav id="crumbs" aria-label="Folder path"></nav>
+      <div class="tools">
+        <button id="mk">New folder</button>
+        <button id="up" class="primary">Upload</button>
+        <button id="updir">Upload folder</button>
+        <button id="editBtn">Edit</button>
+        <button id="empty" class="danger" hidden>Empty trash</button>
+        <input id="pick" type="file" multiple hidden>
+        <input id="pickdir" type="file" webkitdirectory multiple hidden>
+      </div>
+    </header>
+    <p id="note" class="note" hidden>Deleted items stay here for 48 hours, then they are removed for good.</p>
+    <section id="ups" hidden>
+      <div id="upall">
+        <div class="uphead"><span id="uptxt"></span><span id="uppct"></span></div>
+        <div class="bar"><i id="upbar"></i></div>
+      </div>
+      <div id="uprows"></div>
+      <div id="upmore" class="upmore" hidden></div>
+    </section>
+    <ul id="list"></ul>
+  </main>
+</div>
 
 <dialog id="pv">
   <div class="pvhead"><span id="pvname"></span><button id="pvclose">Close</button></div>
@@ -129,12 +248,14 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 <ul id="mvlist"></ul>
 <div class="mvfoot"><button id="mvgo" class="primary">Move here</button></div>
 </dialog>
-<div id="st" role="status" hidden></div>
-
-<div id="stobar" hidden>
-  <span class="stxt" id="stotxt">Loading…</span>
-  <div class="sbar"><i id="stobarfill"></i></div>
+<div id="editbar">
+  <span class="ecount"><b id="ecount">0</b> selected</span>
+  <button id="eSelAll">Select all</button>
+  <button id="eDeselAll">Deselect all</button>
+  <button id="eMoveBtn">Move</button>
+  <button id="eDelBtn" class="danger">Delete</button>
 </div>
+<div id="st" role="status" hidden></div>
 
 <dialog id="stodlg">
   <div class="stohead"><h2>Storage Details</h2><button id="stoclose">Close</button></div>
@@ -142,7 +263,7 @@ dialog::backdrop{background:rgba(0,0,0,.7)}
 </dialog>
 
 <script src="liveedit.js"></script>
-<script src="hardcodedcode.js" onerror="this.remove()"></script>
+<script src="hardcodedcode.js?v=15" onerror="this.remove()"></script>
 <script>
 const $ = s => document.querySelector(s), enc = encodeURIComponent;
 const join = (a, b) => a ? a + '/' + b : b;
@@ -150,6 +271,27 @@ const ext = n => (n.match(/\.([^.]+)$/) || [, ''])[1].toLowerCase();
 const isHeic = n => ['heic','heif'].includes(ext(n));
 const kind = n => ['jpg','jpeg','png','gif','webp','heic','heif'].includes(ext(n)) ? 'img' : ['mp4','webm'].includes(ext(n)) ? 'video' : '';
 const url = p => '/api/download?name=' + enc(p);
+const ICON_MAP = {
+  pdf: 'pdf.svg',
+  jpg: 'image.svg', jpeg: 'image.svg', png: 'image.svg', gif: 'image.svg', webp: 'image.svg', heic: 'image.svg', heif: 'image.svg', svg: 'image.svg', bmp: 'image.svg', ico: 'image.svg', tiff: 'image.svg', tif: 'image.svg',
+  mp4: 'video.svg', webm: 'video.svg', mkv: 'video.svg', mov: 'video.svg', avi: 'video.svg', wmv: 'video.svg', flv: 'video.svg', m4v: 'video.svg',
+  mp3: 'audio.svg', wav: 'audio.svg', flac: 'audio.svg', ogg: 'audio.svg', m4a: 'audio.svg', aac: 'audio.svg', opus: 'audio.svg', alac: 'audio.svg',
+  zip: 'archive.svg', rar: 'archive.svg', '7z': 'archive.svg', tar: 'archive.svg', gz: 'archive.svg', bz2: 'archive.svg', xz: 'archive.svg', deb: 'archive.svg', rpm: 'archive.svg', apk: 'archive.svg',
+  js: 'code.svg', ts: 'code.svg', jsx: 'code.svg', tsx: 'code.svg', py: 'code.svg', cpp: 'code.svg', c: 'code.svg', h: 'code.svg', hpp: 'code.svg', html: 'code.svg', css: 'code.svg', scss: 'code.svg', json: 'code.svg', sh: 'code.svg', bash: 'code.svg', rs: 'code.svg', go: 'code.svg', java: 'code.svg', php: 'code.svg', rb: 'code.svg', yaml: 'code.svg', yml: 'code.svg', toml: 'code.svg', xml: 'code.svg',
+  xlsx: 'sheet.svg', xls: 'sheet.svg', csv: 'sheet.svg', tsv: 'sheet.svg', ods: 'sheet.svg',
+  docx: 'word.svg', doc: 'word.svg', odt: 'word.svg', rtf: 'word.svg',
+  pptx: 'presentation.svg', ppt: 'presentation.svg', odp: 'presentation.svg', key: 'presentation.svg',
+  txt: 'text.svg', md: 'text.svg', log: 'text.svg', ini: 'text.svg', conf: 'text.svg', cfg: 'text.svg', env: 'text.svg',
+  sqlite: 'database.svg', sqlite3: 'database.svg', db: 'database.svg', sql: 'database.svg', accdb: 'database.svg', mdb: 'database.svg',
+  ttf: 'font.svg', otf: 'font.svg', woff: 'font.svg', woff2: 'font.svg',
+  iso: 'disk.svg', img: 'disk.svg', dmg: 'disk.svg'
+};
+function renderIcon(it) {
+  if (it.isDirectory) return '<img src="/assets/icons/folder.svg?v=3" class="ic-img" width="32" height="32" alt="folder">';
+  const e = ext(it.name);
+  if (e && ICON_MAP[e]) return '<img src="/assets/icons/' + ICON_MAP[e] + '?v=3" class="ic-img" width="32" height="32" alt="' + e + '">';
+  return '<img src="/assets/tux.png" class="ic-img" width="32" height="32" alt="file" onerror="this.src=\'/assets/icons/file.svg?v=3\'">';
+}
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
 let path = '', timer, trashOn = false, inTrash = false;
 
@@ -174,14 +316,22 @@ function crumbs() {
 
 function chrome() {
   $('#mk').hidden = $('#up').hidden = $('#updir').hidden = inTrash;
-  $('#tr').hidden = inTrash || !trashOn;
-  $('#back').hidden = $('#empty').hidden = $('#note').hidden = !inTrash;
+  $('#editBtn').hidden = inTrash;
+  $('#tr').hidden = !trashOn;
+  $('#sq').hidden = inTrash;
+  renderPins();
+  $('#navfiles').classList.toggle('on', !inTrash);
+  $('#tr').classList.toggle('on', inTrash);
+  $('#empty').hidden = $('#note').hidden = !inTrash;
+  if (inTrash && editMode) exitEdit();
 }
 
 function route() {
   const raw = location.hash.slice(1);
   inTrash = raw === '?trash';
   path = inTrash ? '' : decodeURIComponent(raw);
+  if (editMode) exitEdit();
+  $('#q').value = '';
   return inTrash ? loadTrash() : load();
 }
 
@@ -202,10 +352,13 @@ async function load() {
   }
   for (const it of items) {
     const p = join(path, it.name), li = el('li', 'row'), b = el('button', 'name');
-    const ic = el('span', it.isDirectory ? 'ic dir' : 'ic', it.isDirectory ? '' : ext(it.name).slice(0, 4));
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'row-cb'; cb.dataset.path = p; cb.dataset.isdir = it.isDirectory ? '1' : '';
+    cb.onclick = e => { e.stopPropagation(); updateEditBar(); };
+    const ic = el('span', 'ic-wrap');
+    ic.innerHTML = renderIcon(it);
     const nm = el('span', '', it.name), ac = el('span', 'acts');
     b.append(ic, nm);
-    b.onclick = () => it.isDirectory ? (location.hash = enc(p)) : window.liveEdit && liveEdit.canOpen(it.name) ? liveEdit.open(it.name, p) : kind(it.name) ? preview(it.name, p) : save(it.name, p);
+    b.onclick = () => { if (document.body.classList.contains('editing')) { cb.checked = !cb.checked; updateEditBar(); return; } it.isDirectory ? (location.hash = enc(p)) : window.liveEdit && liveEdit.canOpen(it.name) ? liveEdit.open(it.name, p) : kind(it.name) ? preview(it.name, p) : save(it.name, p); };
     if (!it.isDirectory) {
       const d = el('a', 'btn', 'Download'); d.href = url(p); d.download = it.name;
       ac.append(d);
@@ -214,8 +367,19 @@ async function load() {
 const mv = el('button', '', 'Move'); mv.onclick = () => moveItem(it.name, p, it.isDirectory);
 ac.append(rn, mv);
 const x = el('button', 'danger', 'Delete'); x.onclick = () => del(it.name, p, it.isDirectory);
-    ac.append(x); li.append(b, ac); list.append(li);
+    ac.append(x);
+    if (it.isDirectory) {
+      const pb = el('button', 'pinbtn'); pb.type = 'button'; pb.dataset.path = p; pb.innerHTML = PIN_SVG;
+      pb.title = 'Pin to sidebar'; pb.setAttribute('aria-label', 'Pin ' + it.name + ' to sidebar');
+      pb.setAttribute('aria-pressed', pins.includes(p)); pb.classList.toggle('on', pins.includes(p));
+      pb.onclick = () => togglePin(p);
+      li.draggable = true;
+      li.addEventListener('dragstart', e => startDrag(e, p));
+      li.append(cb, pb, b, ac);
+    } else li.append(cb, b, ac);
+    list.append(li);
   }
+  applyFilter();
 }
 
 const left = ms => {
@@ -238,7 +402,8 @@ async function loadTrash() {
   if (!items.length) { list.append(el('li', 'empty', 'The trash is empty.')); return; }
   for (const it of items) {
     const li = el('li', 'row'), info = el('div', 'info'), ac = el('span', 'acts');
-    const ic = el('span', it.isDirectory ? 'ic dir' : 'ic', it.isDirectory ? '' : ext(it.name).slice(0, 4));
+    const ic = el('span', 'ic-wrap');
+    ic.innerHTML = renderIcon(it);
     const tx = el('span'), nm = el('b', '', it.name);
     const where = it.originalPath.includes('/') ? it.originalPath.slice(0, it.originalPath.lastIndexOf('/')) : 'Files';
     const sub = el('small', '', 'from ' + where + ' · ' + left(it.expiresAt * 1000 - Date.now()));
@@ -293,7 +458,7 @@ async function renameItem(name, p) {
   if (n.includes('/')) { say('Names cannot contain "/".', 1); return; }
   const r = await fetch('/api/rename?name=' + enc(p) + '&newName=' + enc(n), { method: 'POST' });
   say(r.ok ? 'Renamed to ' + n : r.status === 409 ? '"' + n + '" already exists here.' : 'Could not rename ' + name, !r.ok);
-  if (r.ok) load();
+  if (r.ok) { fixPins(p, join(upDir(p), n)); load(); }
 }
 let mvName = '', mvSrc = '', mvIsDir = false, mvDir = '';
 const upDir = p => p.includes('/') ? p.slice(0, p.lastIndexOf('/')) : '';
@@ -312,7 +477,9 @@ async function mvShow(dir) {
   } catch { list.append(el('li', 'empty', 'Could not open this folder.')); return; }
   const row = (label, to) => {
     const li = el('li', 'row'), b = el('button', 'name');
-    b.append(el('span', 'ic dir'), el('span', '', label));
+    const ic = el('span', 'ic-wrap');
+    ic.innerHTML = '<img src="/assets/icons/folder.svg?v=3" class="ic-img" width="32" height="32" alt="folder">';
+    b.append(ic, el('span', '', label));
     b.onclick = () => mvShow(to);
     li.append(b); list.append(li);
   };
@@ -331,7 +498,7 @@ function moveItem(name, p, isDir) {
 $('#mvgo').onclick = async () => {
   const r = await fetch('/api/move?name=' + enc(mvSrc) + '&dest=' + enc(mvDir), { method: 'POST' });
   say(r.ok ? 'Moved ' + mvName : r.status === 409 ? 'A file named "' + mvName + '" is already in that folder.' : 'Could not move ' + mvName, !r.ok);
-  if (r.ok) { $('#mvdlg').close(); load(); }
+  if (r.ok) { fixPins(mvSrc, join(mvDir, mvSrc.split('/').pop())); $('#mvdlg').close(); load(); }
 };
 $('#mvclose').onclick = () => $('#mvdlg').close();
 $('#mvdlg').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
@@ -342,7 +509,7 @@ async function del(name, p, isDir) {
   if (!confirm(msg)) return;
   const r = await fetch('/api/delete?name=' + enc(p), { method: 'DELETE' });
   say(r.ok ? (trashOn ? 'Moved ' + name + ' to trash' : 'Deleted ' + name) : 'Could not delete ' + name, !r.ok);
-  if (r.ok) { $('#pv').close(); load(); }
+  if (r.ok) { fixPins(p, null); $('#pv').close(); load(); }
 }
 
 let busy = false;
@@ -428,7 +595,6 @@ $('#mk').onclick = async () => {
   if (ok) load();
 };
 $('#tr').onclick = () => location.hash = '?trash';
-$('#back').onclick = () => location.hash = '';
 $('#pvclose').onclick = () => $('#pv').close();
 $('#pv').addEventListener('close', () => $('#pvbody').textContent = '');
 $('#pv').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
@@ -548,6 +714,269 @@ $('#stoclose').onclick = () => $('#stodlg').close();
 $('#stodlg').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
 
 loadStorage();
+
+// Edit mode
+let editMode = false;
+
+function checkedPaths() {
+  return [...document.querySelectorAll('.row-cb:checked')].map(cb => ({ path: cb.dataset.path, isDir: !!cb.dataset.isdir }));
+}
+
+function updateEditBar() {
+  const sel = checkedPaths();
+  $('#ecount').textContent = sel.length;
+  const bar = $('#editbar');
+  bar.classList.toggle('on', editMode);
+  // disable action buttons when nothing selected
+  $('#eMoveBtn').disabled = sel.length === 0;
+  $('#eDelBtn').disabled  = sel.length === 0;
+}
+
+function enterEdit() {
+  editMode = true;
+  document.body.classList.add('editing');
+  $('#editBtn').textContent = 'Done';
+  $('#editBtn').classList.add('active');
+  updateEditBar();
+}
+
+function exitEdit() {
+  editMode = false;
+  document.body.classList.remove('editing');
+  $('#editBtn').textContent = 'Edit';
+  $('#editBtn').classList.remove('active');
+  document.querySelectorAll('.row-cb').forEach(cb => cb.checked = false);
+  $('#editbar').classList.remove('on');
+}
+
+$('#editBtn').onclick = () => editMode ? exitEdit() : enterEdit();
+
+$('#eSelAll').onclick = () => {
+  document.querySelectorAll('.row:not([hidden]) .row-cb').forEach(cb => cb.checked = true);
+  updateEditBar();
+};
+$('#eDeselAll').onclick = () => {
+  document.querySelectorAll('.row-cb').forEach(cb => cb.checked = false);
+  updateEditBar();
+};
+
+$('#eDelBtn').onclick = async () => {
+  const sel = checkedPaths();
+  if (!sel.length) return;
+  const msg = trashOn
+    ? 'Move ' + sel.length + ' item' + (sel.length > 1 ? 's' : '') + ' to trash?'
+    : 'Delete ' + sel.length + ' item' + (sel.length > 1 ? 's' : '') + '? This cannot be undone.';
+  if (!confirm(msg)) return;
+  let failed = 0;
+  for (const { path: p } of sel) {
+    const r = await fetch('/api/delete?name=' + enc(p), { method: 'DELETE' });
+    if (!r.ok) failed++; else fixPins(p, null);
+  }
+  say(failed ? failed + ' deletions failed' : 'Deleted ' + sel.length + ' item' + (sel.length > 1 ? 's' : ''), !!failed);
+  exitEdit();
+  load();
+};
+
+$('#eMoveBtn').onclick = () => {
+  const sel = checkedPaths();
+  if (!sel.length) return;
+  // Reuse the existing move dialog; wire mvgo to batch-move all selected items
+  mvName = sel.length + ' items'; mvSrc = sel[0].path; mvIsDir = false;
+  $('#mvtitle').textContent = 'Move ' + sel.length + ' item' + (sel.length > 1 ? 's' : '');
+  // Override mvgo for this batch operation
+  $('#mvgo').onclick = async () => {
+    let failed = 0;
+    for (const { path: p } of sel) {
+      const r = await fetch('/api/move?name=' + enc(p) + '&dest=' + enc(mvDir), { method: 'POST' });
+      if (!r.ok) failed++; else fixPins(p, join(mvDir, p.split('/').pop()));
+    }
+    say(failed ? failed + ' moves failed' : 'Moved ' + sel.length + ' item' + (sel.length > 1 ? 's' : ''), !!failed);
+    $('#mvdlg').close();
+    // Restore normal single-move handler
+    $('#mvgo').onclick = singleMoveHandler;
+    exitEdit();
+    load();
+  };
+  $('#mvdlg').showModal();
+  mvShow(path);
+};
+
+// Save original single-move handler so batch move can restore it
+const singleMoveHandler = $('#mvgo').onclick;
+
+// Search (filters the folder you are in)
+function applyFilter() {
+  const q = $('#q').value.trim().toLowerCase();
+  let shown = 0, total = 0;
+  const old = $('#nomatch'); if (old) old.remove();
+  document.querySelectorAll('#list .row').forEach(li => {
+    total++;
+    const n = (li.querySelector('.name span:last-child') || {}).textContent || '';
+    const hit = !q || n.toLowerCase().includes(q);
+    li.hidden = !hit;
+    if (hit) shown++; else { const c = li.querySelector('.row-cb'); if (c) c.checked = false; }
+  });
+  if (q && total && !shown) { const e = el('li', 'empty', 'Nothing here matches "' + $('#q').value.trim() + '".'); e.id = 'nomatch'; $('#list').append(e); }
+  if (editMode) updateEditBar();
+}
+$('#q').addEventListener('input', applyFilter);
+$('#q').addEventListener('keydown', e => { if (e.key === 'Escape') { $('#q').value = ''; applyFilter(); } });
+
+// Pinned folders (shared through /api/pins, cached in localStorage)
+const PIN_KEY = 'rfiledrive.pins', PIN_MIME = 'application/x-rfd-folder';
+const PIN_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M9 3h6l-1 6 3 3v2h-4v6l-1 1-1-1v-6H7v-2l3-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+let pins = [], pinsApi = null, pinSaving = 0, drag = null;   // pinsApi: null = unknown, false = server has no /api/pins
+try { const v = JSON.parse(localStorage.getItem(PIN_KEY) || '[]'); if (Array.isArray(v)) pins = v.filter(x => typeof x === 'string'); } catch {}
+const cachePins = () => { try { localStorage.setItem(PIN_KEY, JSON.stringify(pins)); } catch {} };
+
+async function savePins() {
+  cachePins();
+  if (pinsApi === false) return;
+  pinSaving++;
+  try {
+    const r = await fetch('/api/pins', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(pins) });
+    if (r.ok) pinsApi = true;
+    else if (r.status === 404 || r.status === 405) pinsApi = false;
+    else say('Could not save the pinned folders.', 1);
+  } catch { say('Could not save the pinned folders.', 1); }
+  finally { pinSaving--; }
+}
+async function loadPins(first) {
+  if (pinSaving || drag) return;
+  try {
+    const r = await fetch('/api/pins', { cache: 'no-store' });
+    if (!r.ok) { if (r.status === 404 || r.status === 405) pinsApi = false; return; }
+    const v = await r.json();
+    if (!Array.isArray(v)) return;
+    pinsApi = true;
+    const list = v.filter(x => typeof x === 'string');
+    if (first && !list.length && pins.length) { savePins(); return; }   // first run: upload this browser's old list
+    if (JSON.stringify(list) !== JSON.stringify(pins)) { pins = list; cachePins(); renderPins(); }
+  } catch {}
+}
+
+function togglePin(p) {
+  pins = pins.includes(p) ? pins.filter(x => x !== p) : [...pins, p];
+  savePins(); renderPins();
+}
+function movePin(p, to) {           // to = index in the list as it is now
+  const from = pins.indexOf(p);
+  if (from < 0) pins.splice(Math.min(to, pins.length), 0, p);
+  else { pins.splice(from, 1); pins.splice(from < to ? to - 1 : to, 0, p); }
+  savePins(); renderPins();
+}
+// a pinned folder was renamed/moved (n = new path) or deleted (n = null)
+function fixPins(o, n) {
+  let changed = false;
+  pins = pins.flatMap(p => {
+    if (p !== o && !p.startsWith(o + '/')) return [p];
+    changed = true; return n == null ? [] : [n + p.slice(o.length)];
+  });
+  if (changed) { savePins(); renderPins(); }
+}
+
+function renderPins() {
+  const ul = $('#pinlist');
+  ul.textContent = '';
+  $('#pins').classList.toggle('nopins', !pins.length);
+  pins.forEach((p, i) => {
+    const li = el('li', 'pinitem'), a = el('a'), name = p.split('/').pop();
+    a.href = '#' + enc(p); a.title = p; a.draggable = false;
+    const img = document.createElement('img'); img.src = '/assets/icons/folder.svg?v=3'; img.alt = ''; img.draggable = false;
+    a.append(img, el('span', '', name));
+    li.classList.toggle('on', !inTrash && p === path);
+    li.draggable = true;
+    li.addEventListener('dragstart', e => startDrag(e, p, true));
+    const mk = (txt, label, fn, dis) => { const b = el('button', 'pinctl', txt); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label + ' ' + name); b.disabled = !!dis; b.onclick = fn; return b; };
+    li.append(a,
+      mk('↑', 'Move up', () => movePin(p, i - 1), i === 0),
+      mk('↓', 'Move down', () => movePin(p, i + 2), i === pins.length - 1),
+      mk('×', 'Unpin', () => togglePin(p)));
+    ul.append(li);
+  });
+  document.querySelectorAll('.pinbtn').forEach(b => {
+    const on = pins.includes(b.dataset.path);
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+  });
+}
+
+// Dragging a folder
+//   on Trash ............ moves the folder to the trash (asks first)
+//   middle of a pinned folder .. moves the folder into that folder
+//   anywhere else in the sidebar .. pins it (edges of a pinned item / blank space pick the position)
+// folders that are already pinned can be reordered, or dropped on Trash
+const side = document.querySelector('.side');
+function startDrag(e, p, fromPin) {
+  drag = { path: p, fromPin: !!fromPin };
+  e.dataTransfer.setData(PIN_MIME, p);
+  e.dataTransfer.setData('text/plain', p);
+  e.dataTransfer.effectAllowed = 'move';
+  if (!fromPin) document.body.classList.add('dragging');   // the pin box only shows for folders that aren't pinned yet
+}
+function endDrag() { drag = null; document.body.classList.remove('dragging'); clearDrop(); }
+const pinItems = () => [...$('#pinlist').children];
+function pinIndexAt(y) {
+  const l = pinItems();
+  for (let i = 0; i < l.length; i++) { const r = l[i].getBoundingClientRect(); if (y < r.top + r.height / 2) return i; }
+  return l.length;
+}
+const canMoveInto = (src, dest) => dest !== src && !dest.startsWith(src + '/') && upDir(src) !== dest;
+function dropTarget(e) {
+  if (!drag) return null;
+  const t = e.target.closest ? e.target : e.target.parentElement;
+  const tr = t && t.closest('#tr');
+  if (tr) return !tr.hidden ? { kind: 'trash', el: tr } : null;
+  const item = t && t.closest('.pinitem');
+  if (item) {
+    const i = pinItems().indexOf(item), r = item.getBoundingClientRect(), f = (e.clientY - r.top) / r.height;
+    if (!drag.fromPin && f >= .25 && f <= .75 && canMoveInto(drag.path, pins[i])) return { kind: 'into', el: item, dest: pins[i] };
+    return { kind: 'pin', index: f < .5 ? i : i + 1 };
+  }
+  return { kind: 'pin', index: pinIndexAt(e.clientY) };
+}
+function clearDrop() {
+  side.classList.remove('dragover');
+  pinItems().forEach(li => li.classList.remove('drop-before', 'drop-after', 'drop-into'));
+  $('#tr').classList.remove('drop-ok'); $('#pindrop').classList.remove('over');
+}
+function showDrop(t) {
+  clearDrop();
+  if (t.kind === 'trash') { t.el.classList.add('drop-ok'); return; }
+  if (t.kind === 'into') { t.el.classList.add('drop-into'); return; }
+  side.classList.add('dragover');
+  const l = pinItems();
+  if (t.index < l.length) l[t.index].classList.add('drop-before'); else $('#pindrop').classList.add('over');
+}
+async function moveInto(src, dest) {
+  const name = src.split('/').pop();
+  const r = await fetch('/api/move?name=' + enc(src) + '&dest=' + enc(dest), { method: 'POST' });
+  say(r.ok ? 'Moved ' + name + ' into ' + dest.split('/').pop() : r.status === 409 ? 'A file named "' + name + '" is already in that folder.' : 'Could not move ' + name, !r.ok);
+  if (r.ok) { fixPins(src, join(dest, name)); load(); }
+}
+side.addEventListener('dragover', e => {
+  if (!drag) return;
+  const t = dropTarget(e);
+  if (!t) { clearDrop(); return; }
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move'; showDrop(t);
+});
+side.addEventListener('dragleave', e => { if (!side.contains(e.relatedTarget)) clearDrop(); });
+side.addEventListener('drop', e => {
+  if (!drag) return;
+  const t = dropTarget(e), d = drag;
+  if (!t) { endDrag(); return; }
+  e.preventDefault(); e.stopPropagation();
+  endDrag();
+  if (t.kind === 'trash') del(d.path.split('/').pop(), d.path, true);
+  else if (t.kind === 'into') moveInto(d.path, t.dest);
+  else movePin(d.path, t.index);
+});
+addEventListener('dragend', endDrag);
+addEventListener('drop', endDrag);
+
+renderPins();
+loadPins(true);
+setInterval(() => { if (!document.hidden) loadPins(); }, 15000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadPins(); });
 </script>
 </body>
 </html>
